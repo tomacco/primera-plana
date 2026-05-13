@@ -1,0 +1,1757 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Primera Plana — Code That Reads Like a Front Page</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400&family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=Oswald:wght@400;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.2/lib/anime.min.js"></script>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/styles/github-dark.min.css">
+  <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/highlight.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/languages/kotlin.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/languages/swift.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/languages/typescript.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/languages/python.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/languages/java.min.js"></script>
+  <style>
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+    :root {
+      /* Dark phase — editor's desk at night */
+      --tabloid-bg: #1f1e1b;
+      --tabloid-paper: #e8e4db;
+      --tabloid-red: #a0523c;
+      --tabloid-yellow: #c9a96e;
+      --tabloid-ink: #16150f;
+
+      /* Light phase — aged cotton broadsheet */
+      --broadsheet-bg: #f7f4ee;
+      --broadsheet-ink: #2a2520;
+      --broadsheet-ink-light: #6b6358;
+      --broadsheet-rule: #d4cec4;
+      --broadsheet-accent: #8c5e4a;
+      --broadsheet-teal: #4a7c6f;
+      --broadsheet-gold: #8b7535;
+
+      /* Halftone */
+      --dot-color: rgba(0,0,0,0.025);
+    }
+
+    html {
+      scroll-snap-type: y mandatory;
+      overflow-y: scroll;
+      scroll-behavior: smooth;
+    }
+
+    body {
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+
+    /* ============ FULLPAGE SECTIONS ============ */
+
+    section {
+      min-height: 100vh;
+      scroll-snap-align: start;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 60px 80px;
+      position: relative;
+      overflow-x: auto;
+      overflow-y: hidden;
+    }
+
+    .content {
+      max-width: 1100px;
+      width: 100%;
+      position: relative;
+      z-index: 2;
+    }
+
+    /* ============ HALFTONE OVERLAY ============ */
+
+    .halftone::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background-image: radial-gradient(circle, var(--dot-color) 1.5px, transparent 1.5px);
+      background-size: 8px 8px;
+      pointer-events: none;
+      z-index: 1;
+    }
+
+    /* ============ TABLOID PHASE (Slides 1-5) ============ */
+
+    .tabloid {
+      background: var(--tabloid-bg);
+      color: var(--tabloid-paper);
+      font-family: 'Oswald', sans-serif;
+    }
+
+    .tabloid .halftone-dark::before {
+      background-image: radial-gradient(circle, rgba(255,255,255,0.03) 1.5px, transparent 1.5px);
+      background-size: 6px 6px;
+    }
+
+    .tabloid-headline {
+      font-family: 'Playfair Display', serif;
+      font-weight: 900;
+      font-size: 4.5rem;
+      line-height: 1.05;
+      letter-spacing: -1px;
+      color: var(--tabloid-paper);
+    }
+
+    .tabloid-headline .red {
+      color: var(--tabloid-red);
+    }
+
+    .tabloid-headline .yellow {
+      color: var(--tabloid-yellow);
+    }
+
+    .tabloid-sub {
+      font-family: 'Libre Baskerville', serif;
+      font-size: 1.3rem;
+      font-style: italic;
+      color: rgba(245, 240, 232, 0.7);
+      margin-top: 1.2em;
+      line-height: 1.6;
+    }
+
+    .tabloid-stat {
+      display: flex;
+      align-items: baseline;
+      gap: 16px;
+      margin-bottom: 0.6em;
+    }
+
+    .tabloid-stat-number {
+      font-family: 'Playfair Display', serif;
+      font-weight: 900;
+      font-size: 3.5rem;
+      color: var(--tabloid-yellow);
+      line-height: 1;
+    }
+
+    .tabloid-stat-text {
+      font-family: 'Libre Baskerville', serif;
+      font-size: 1.1rem;
+      color: rgba(245, 240, 232, 0.8);
+    }
+
+    .tabloid-banner {
+      background: transparent;
+      color: var(--tabloid-yellow);
+      font-family: 'Oswald', sans-serif;
+      font-weight: 600;
+      font-size: 0.85rem;
+      text-transform: uppercase;
+      letter-spacing: 4px;
+      padding: 8px 0;
+      display: inline-block;
+      margin-bottom: 1.5em;
+      border-bottom: 1px solid rgba(201, 169, 110, 0.3);
+    }
+
+    .ink-splatter {
+      position: absolute;
+      width: 300px;
+      height: 300px;
+      border-radius: 50%;
+      background: var(--tabloid-yellow);
+      opacity: 0.04;
+      filter: blur(80px);
+    }
+
+    /* ============ TRANSITION SLIDE ============ */
+
+    .transition-slide {
+      background: linear-gradient(to bottom, var(--tabloid-bg) 0%, var(--tabloid-bg) 48%, var(--broadsheet-bg) 52%, var(--broadsheet-bg) 100%);
+      position: relative;
+    }
+
+    .torn-edge {
+      position: absolute;
+      left: 0;
+      right: 0;
+      top: 48%;
+      height: 4%;
+      background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1200 40'%3E%3Cpath d='M0,20 Q30,5 60,18 T120,22 T180,16 T240,20 T300,24 T360,18 T420,22 T480,16 T540,20 T600,24 T660,18 T720,20 T780,24 T840,16 T900,22 T960,18 T1020,22 T1080,20 T1140,16 T1200,20 L1200,40 L0,40 Z' fill='%23faf8f4'/%3E%3C/svg%3E") no-repeat center;
+      background-size: 100% 100%;
+      z-index: 3;
+    }
+
+    .transition-text-top {
+      font-family: 'Oswald', sans-serif;
+      font-weight: 700;
+      font-size: 2rem;
+      text-transform: uppercase;
+      color: rgba(245, 240, 232, 0.5);
+      letter-spacing: 4px;
+      position: absolute;
+      top: 25%;
+    }
+
+    .transition-text-bottom {
+      font-family: 'Playfair Display', serif;
+      font-weight: 900;
+      font-size: 3.5rem;
+      color: var(--broadsheet-ink);
+      position: absolute;
+      bottom: 25%;
+      text-align: center;
+      line-height: 1.3;
+    }
+
+    /* ============ BROADSHEET PHASE (Slides 7-15) ============ */
+
+    .broadsheet {
+      background: var(--broadsheet-bg);
+      color: var(--broadsheet-ink);
+      font-family: 'Libre Baskerville', serif;
+    }
+
+    .broadsheet-masthead {
+      font-family: 'Playfair Display', serif;
+      font-weight: 900;
+      font-size: 4rem;
+      line-height: 1.1;
+      color: var(--broadsheet-ink);
+      margin-bottom: 0.3em;
+    }
+
+    .broadsheet-deck {
+      font-family: 'Libre Baskerville', serif;
+      font-style: italic;
+      font-size: 1.2rem;
+      color: var(--broadsheet-ink-light);
+      margin-bottom: 2em;
+      line-height: 1.6;
+    }
+
+    .broadsheet-rule {
+      width: 100%;
+      height: 1px;
+      background: var(--broadsheet-rule);
+      margin: 1.5em 0;
+    }
+
+    .broadsheet-rule.thick {
+      height: 3px;
+      background: var(--broadsheet-ink);
+    }
+
+    .drop-cap::first-letter {
+      font-family: 'Playfair Display', serif;
+      font-size: 4.5rem;
+      float: left;
+      line-height: 0.8;
+      margin-right: 0.1em;
+      margin-top: 0.05em;
+      font-weight: 900;
+      color: var(--broadsheet-accent);
+    }
+
+    /* ============ CODE BLOCKS ============ */
+
+    .code-block {
+      background: #0d1117;
+      border-radius: 8px;
+      padding: 28px 32px;
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 0.85rem;
+      line-height: 1.6;
+      color: #c9d1d9;
+      overflow-x: auto;
+      text-align: left;
+      position: relative;
+      border: 1px solid #30363d;
+    }
+
+    .code-block.good {
+      border-left: 4px solid var(--broadsheet-teal);
+    }
+
+    /* Highlight.js overrides — GitHub Dark style */
+    pre code.hljs {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: inherit;
+      line-height: inherit;
+      padding: 24px 28px;
+      padding-top: 40px;
+      border-radius: 8px;
+      background: #0d1117;
+    }
+
+    pre {
+      background: #0d1117;
+      border-radius: 8px;
+      overflow-x: auto;
+      text-align: left;
+      position: relative;
+      border: 1px solid #30363d;
+    }
+
+    /* Code caption/subtitle labels */
+    .code-caption {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      padding: 8px 16px;
+      font-family: 'Oswald', sans-serif;
+      font-size: 0.8rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      z-index: 3;
+      border-bottom: 1px solid #30363d;
+      border-radius: 8px 8px 0 0;
+    }
+
+    .code-caption.bad {
+      background: rgba(160, 82, 60, 0.1);
+      color: #c48b7a;
+    }
+
+    .code-caption.good {
+      background: rgba(74, 124, 111, 0.1);
+      color: #7fb5a8;
+    }
+
+    .code-caption.neutral {
+      background: rgba(48, 54, 61, 0.4);
+      color: #8b949e;
+    }
+
+    .code-columns {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 24px;
+      margin: 1.5em 0;
+    }
+
+    /* ============ METRICS GRID ============ */
+
+    .metrics-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 32px;
+      margin: 2em 0;
+    }
+
+    .metric-card {
+      text-align: center;
+      padding: 24px;
+      border: 1px solid var(--broadsheet-rule);
+    }
+
+    .metric-number {
+      font-family: 'Playfair Display', serif;
+      font-weight: 900;
+      font-size: 3rem;
+      color: var(--broadsheet-accent);
+      line-height: 1;
+    }
+
+    .metric-label {
+      font-family: 'Libre Baskerville', serif;
+      font-size: 0.9rem;
+      color: var(--broadsheet-ink-light);
+      margin-top: 0.5em;
+    }
+
+    /* ============ RULE CARDS ============ */
+
+    .rule-card {
+      border: 1px solid var(--broadsheet-rule);
+      padding: 32px 40px;
+      margin: 1.5em 0;
+      position: relative;
+    }
+
+    .rule-number {
+      font-family: 'Playfair Display', serif;
+      font-weight: 900;
+      font-size: 6rem;
+      color: var(--broadsheet-rule);
+      position: absolute;
+      top: -10px;
+      right: 24px;
+      line-height: 1;
+      opacity: 0.3;
+    }
+
+    .rule-title {
+      font-family: 'Playfair Display', serif;
+      font-weight: 700;
+      font-size: 1.8rem;
+      margin-bottom: 0.5em;
+      color: var(--broadsheet-ink);
+    }
+
+    .rule-body {
+      font-family: 'Libre Baskerville', serif;
+      font-size: 1rem;
+      line-height: 1.8;
+      color: var(--broadsheet-ink-light);
+    }
+
+    /* ============ SOURCE LINE ============ */
+
+    .source-line {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 0.75rem;
+      color: var(--broadsheet-ink-light);
+      opacity: 0.6;
+      margin-top: 0.5em;
+    }
+
+    /* ============ CTA ============ */
+
+    .cta-list {
+      list-style: none;
+      padding: 0;
+    }
+
+    .cta-list li {
+      font-family: 'Libre Baskerville', serif;
+      font-size: 1.2rem;
+      line-height: 2.2;
+      padding-left: 1.5em;
+      position: relative;
+    }
+
+    .cta-list li::before {
+      content: '\2192';
+      position: absolute;
+      left: 0;
+      color: var(--broadsheet-teal);
+      font-weight: 700;
+    }
+
+    /* ============ SCROLL INDICATOR ============ */
+
+    .scroll-indicator {
+      position: fixed;
+      bottom: 24px;
+      left: 50%;
+      transform: translateX(-50%);
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 0.7rem;
+      color: rgba(128,128,128,0.5);
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      z-index: 100;
+      transition: opacity 0.5s;
+    }
+
+    .scroll-indicator.hidden { opacity: 0; }
+
+    /* ============ SLIDE ANIMATIONS ============ */
+
+    .reveal {
+      opacity: 0;
+      transform: translateY(30px);
+    }
+
+    /* ============ VERDICT BADGES ============ */
+
+    .code-verdict {
+      position: absolute;
+      bottom: 12px;
+      right: 12px;
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.3rem;
+      font-weight: 700;
+      z-index: 10;
+      border: 2px solid;
+    }
+
+    .code-verdict.pass {
+      background: #1a3d34;
+      color: #7fb5a8;
+      border-color: #4a7c6f;
+    }
+
+    .code-verdict.fail {
+      background: #3d1f18;
+      color: #c48b7a;
+      border-color: #a0523c;
+    }
+
+    /* ============ TABBED CODE VIEWER ============ */
+
+    .tabbed-code {
+      position: relative;
+    }
+
+    .tab-bar {
+      display: flex;
+      gap: 0;
+      margin-bottom: 0;
+    }
+
+    .tab-btn {
+      font-family: 'Oswald', sans-serif;
+      font-size: 0.75rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      padding: 10px 20px;
+      border: 1px solid #30363d;
+      border-bottom: none;
+      border-radius: 8px 8px 0 0;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      position: relative;
+      z-index: 2;
+    }
+
+    .tab-btn.tab-bad {
+      background: rgba(160, 82, 60, 0.06);
+      color: #c48b7a;
+    }
+
+    .tab-btn.tab-good {
+      background: rgba(74, 124, 111, 0.06);
+      color: #7fb5a8;
+    }
+
+    .tab-btn.active {
+      border-bottom: 2px solid var(--broadsheet-bg);
+      margin-bottom: -1px;
+    }
+
+    .tab-btn.tab-bad.active {
+      background: rgba(160, 82, 60, 0.12);
+      color: var(--broadsheet-accent);
+    }
+
+    .tab-btn.tab-good.active {
+      background: rgba(74, 124, 111, 0.12);
+      color: var(--broadsheet-teal);
+    }
+
+    .tab-btn:not(.active) {
+      opacity: 0.5;
+    }
+
+    .tab-btn:hover:not(.active) {
+      opacity: 0.8;
+    }
+
+    .tab-panel {
+      display: none;
+    }
+
+    .tab-panel.active {
+      display: block;
+    }
+
+    .tab-panel pre {
+      border-radius: 0 8px 8px 8px;
+    }
+
+    .tab-hint {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 0.7rem;
+      color: var(--broadsheet-ink-light);
+      opacity: 0.6;
+      text-align: center;
+      margin-top: 0.8em;
+    }
+
+    /* ============ RESPONSIVE ============ */
+
+    @media (max-width: 900px) {
+      section { padding: 40px 30px; }
+      .tabloid-headline { font-size: 3.5rem; }
+      .broadsheet-masthead { font-size: 2.8rem; }
+      .code-columns { grid-template-columns: 1fr; }
+      .metrics-grid { grid-template-columns: 1fr; }
+      .code-block { font-size: 0.75rem; padding: 20px; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ═══════════════════════════════════════════════════════════════
+     ACT 1: THE IMPACT (dark phase — tabloid class)
+     ═══════════════════════════════════════════════════════════════ -->
+
+<!-- ==================== SLIDE 1: HOOK ==================== -->
+<section class="tabloid halftone" id="slide-1">
+  <div class="ink-splatter" style="top: -50px; right: -80px;"></div>
+  <div class="ink-splatter" style="bottom: -30px; left: -60px;"></div>
+  <div class="content" style="text-align: center;">
+    <div class="tabloid-banner reveal">PRIMERA PLANA</div>
+    <h1 class="tabloid-headline reveal">
+      The <span class="yellow">human</span> review<br>matters <span class="red">more</span><br>than ever
+    </h1>
+    <p class="tabloid-sub reveal">
+      Machines write faster. Humans still need to <em>understand</em>.<br>Let's make that effortless.
+    </p>
+  </div>
+</section>
+
+<!-- ==================== SLIDE 2: THE BAD CODE ==================== -->
+<section class="tabloid halftone" id="slide-2" style="padding: 40px 50px;">
+  <div class="content" style="max-width: 960px; text-align: center;">
+    <div class="tabloid-banner reveal">CAN YOU REVIEW THIS IN 5 MINUTES?</div>
+    <div class="reveal" style="position: relative; margin-top: 0.8em;">
+      <div class="code-verdict fail">&cross;</div>
+      <pre style="border-left: 4px solid var(--tabloid-red); margin: 0;"><code class="language-kotlin" style="font-size: 0.76rem; line-height: 1.6;">private suspend fun validateAndBuild(
+    input: CreateSubscriptionInput,
+): Either&lt;SubscriptionFailure, Subscription&gt; =
+    withContext(dispatcherProvider.io) {
+        validator.validate(input)
+            .takeIf { it.isNotValid() }
+            ?.let { return@withContext DataInvalidityFailure(it.getFailures().toString()).left() }
+
+        val farmAvailabilityFetch = async { fetchFarmAvailability(input) }
+        val shippingZoneFetch = async { fetchShippingZone(input) }
+        farmAvailabilityFetch.await()
+            .flatMap { availability -&gt;
+                shippingZoneFetch.await().map { zone -&gt; availability to zone }
+            }
+            .flatMap {
+                val (roastType, harvestWindow) = it.second
+                resolveRoastPreferences(input, it.first, roastType)
+                    .map { prefs -&gt; Triple(prefs, roastType, harvestWindow) }
+            }
+            .flatMap { (prefs, roastType, harvestWindow) -&gt;
+                validateShippingWindow(input, prefs, harvestWindow)
+                    .map { validated -&gt; validated to roastType }
+            }
+            .flatMap { (validated, roastType) -&gt;
+                validated.grindSize?.let { grind -&gt;
+                    grindCompatibilityPort.check(roastType, grind)
+                        .mapLeft { SubscriptionFailure.IncompatibleGrind(it.reason) }
+                        .map { validated to roastType }
+                } ?: (validated to roastType).right()
+            }
+            .map { (prefs, roastType) -&gt;
+                buildSubscription(input, prefs, roastType)
+            }
+            .onLeft { failure -&gt;
+                logger.warn(PROCESS, FAILED, "userId" to input.userId,
+                    "reason" to "Subscription creation failed: $failure")
+                monitor.subscriptionFailed(input.roastType)
+            }
+    }</code></pre>
+    </div>
+    <p class="reveal" style="font-family: 'Libre Baskerville'; font-size: 1.1rem; color: var(--tabloid-red); margin-top: 1.2em; font-style: italic; line-height: 1.7;">
+      5 nested flatMaps. Pair destructuring. Async inside chains.<br>
+      <span style="color: var(--tabloid-yellow);">What does this method actually do?</span>
+    </p>
+  </div>
+</section>
+
+<!-- ==================== SLIDE 3: THE FIX — Tabbed (Vanilla / Either / Arrow) ==================== -->
+<section class="tabloid halftone" id="slide-3" style="padding: 40px 60px;">
+  <div class="content" style="max-width: 920px; text-align: center;">
+    <div class="tabloid-banner reveal">SAME METHOD. THREE STYLES. SAME SHAPE.</div>
+    <div class="reveal tabbed-code" data-tabgroup="impact-fix" style="margin-top: 0.8em;">
+      <div class="tab-bar" style="justify-content: center;">
+        <button class="tab-btn tab-good active" data-tab="vanilla">&check; Kotlin &mdash; Vanilla</button>
+        <button class="tab-btn tab-good" data-tab="either">&check; Kotlin &mdash; Either</button>
+        <button class="tab-btn tab-good" data-tab="arrow">&check; Kotlin &mdash; Arrow Raise</button>
+      </div>
+      <div class="tab-panel active" data-tab="vanilla" style="position: relative;">
+        <div class="code-verdict pass">&check;</div>
+        <pre style="border-left: 4px solid var(--broadsheet-teal); border-radius: 0 8px 8px 8px; margin: 0;"><code class="language-kotlin" style="font-size: 1rem; line-height: 1.6;">private suspend fun validateAndBuild(
+    input: CreateSubscriptionInput,
+): Subscription? {
+    if (!valid(input)) return null
+
+    val (availability, zone) = fetchAvailabilityAndZone(input) ?: return null
+    val preferences = resolvePreferences(input, availability) ?: return null
+    val validated = validateShipping(input, preferences, zone) ?: return null
+    val withGrind = validateGrindCompatibility(validated) ?: return null
+
+    return buildSubscription(input, withGrind)
+}</code></pre>
+      </div>
+      <div class="tab-panel" data-tab="either" style="position: relative;">
+        <div class="code-verdict pass">&check;</div>
+        <pre style="border-left: 4px solid var(--broadsheet-teal); border-radius: 0 8px 8px 8px; margin: 0;"><code class="language-kotlin" style="font-size: 1rem; line-height: 1.6;">private suspend fun validateAndBuild(
+    input: CreateSubscriptionInput,
+): Either&lt;SubscriptionFailure, Subscription&gt; =
+    validateInput(input)
+        .flatMap { fetchAvailabilityAndZone(input) }
+        .flatMap { (availability, zone) -&gt; resolvePreferences(input, availability) }
+        .flatMap { prefs -&gt; validateShipping(input, prefs) }
+        .flatMap { validated -&gt; validateGrindCompatibility(validated) }
+        .map { buildSubscription(input, it) }
+        .onLeft { logSubscriptionFailed(input, it) }</code></pre>
+      </div>
+      <div class="tab-panel" data-tab="arrow" style="position: relative;">
+        <div class="code-verdict pass">&check;</div>
+        <pre style="border-left: 4px solid var(--broadsheet-teal); border-radius: 0 8px 8px 8px; margin: 0;"><code class="language-kotlin" style="font-size: 1rem; line-height: 1.6;">private suspend fun validateAndBuild(
+    input: CreateSubscriptionInput,
+): Either&lt;SubscriptionFailure, Subscription&gt; = either {
+    val validated = validateInput(input).bind()
+    val (availability, zone) = fetchAvailabilityAndZone(input).bind()
+    val preferences = resolvePreferences(input, availability).bind()
+    val shipping = validateShipping(input, preferences, zone).bind()
+    val withGrind = validateGrindCompatibility(shipping).bind()
+
+    buildSubscription(input, withGrind)
+}</code></pre>
+      </div>
+    </div>
+    <p class="reveal" style="font-family: 'Libre Baskerville'; font-size: 1rem; color: rgba(232,228,219,0.75); margin-top: 1.5em; line-height: 1.7;">
+      The structure is identical. The tool changes &mdash; the shape doesn't.<br>
+      <code style="color: var(--tabloid-yellow);">?: return</code>, <code style="color: var(--tabloid-yellow);">.flatMap {}</code>, or <code style="color: var(--tabloid-yellow);">.bind()</code> &mdash; pick what fits your team.
+    </p>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════════════
+     ACT 2: THE PHILOSOPHY (transition + broadsheet phase)
+     ═══════════════════════════════════════════════════════════════ -->
+
+<!-- ==================== SLIDE 4: THE INVERTED PYRAMID ==================== -->
+<section class="transition-slide" id="slide-4" style="background: #0d1117; justify-content: center; align-items: center;">
+  <div class="content" style="max-width: 1100px;">
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 48px; align-items: center;">
+      <div class="reveal">
+        <img src="morning-chronicle.png" alt="The Morning Chronicle — newspaper hierarchy" style="width: 100%; border-radius: 4px; box-shadow: 0 20px 60px rgba(0,0,0,0.6), 0 8px 20px rgba(0,0,0,0.4);">
+      </div>
+      <div>
+        <p class="reveal" style="font-family: 'Oswald'; font-size: 0.9rem; text-transform: uppercase; letter-spacing: 3px; color: rgba(245,240,232,0.4); margin-bottom: 1em;">Since the 1860s</p>
+        <h2 class="reveal" style="font-family: 'Playfair Display'; font-weight: 900; font-size: 2.4rem; color: var(--tabloid-paper); line-height: 1.2; margin-bottom: 0.6em;">The Inverted Pyramid</h2>
+        <p class="reveal" style="font-family: 'Libre Baskerville'; font-size: 1rem; line-height: 1.8; color: rgba(245,240,232,0.75);">
+          Journalists lead with the essential &mdash; <em>who, what, when, where</em> &mdash; in the first line. Details follow in decreasing importance.
+        </p>
+        <p class="reveal" style="font-family: 'Libre Baskerville'; font-size: 1rem; line-height: 1.8; color: rgba(245,240,232,0.75); margin-top: 0.8em;">
+          Editors cut from the bottom. Readers stop whenever they've learned enough. The story still makes sense.
+        </p>
+        <p class="reveal" style="font-family: 'Playfair Display'; font-weight: 700; font-size: 1.3rem; color: var(--tabloid-yellow); margin-top: 1.5em;">
+          What if code worked the same way?
+        </p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ==================== SLIDE 5: THE THREE RULES ==================== -->
+<section class="broadsheet halftone" id="slide-5">
+  <div class="content" style="text-align: center;">
+    <div class="broadsheet-rule thick"></div>
+    <h2 class="broadsheet-masthead reveal" style="font-size: 4.5rem;">The Newspaper Style</h2>
+    <div class="broadsheet-rule"></div>
+    <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 40px; margin-top: 2em; text-align: left;">
+      <div class="reveal">
+        <div style="font-family: 'Playfair Display'; font-weight: 900; font-size: 1.5rem; margin-bottom: 0.3em; color: var(--broadsheet-accent);">Headlines</div>
+        <p style="font-family: 'Libre Baskerville'; font-size: 0.95rem; line-height: 1.7; color: var(--broadsheet-ink-light);">
+          Public methods are short sequences of well-named steps. 5-10 lines. A reader understands the full flow instantly.
+        </p>
+      </div>
+      <div class="reveal">
+        <div style="font-family: 'Playfair Display'; font-weight: 900; font-size: 1.5rem; margin-bottom: 0.3em; color: var(--broadsheet-accent);">Paragraphs</div>
+        <p style="font-family: 'Libre Baskerville'; font-size: 0.95rem; line-height: 1.7; color: var(--broadsheet-ink-light);">
+          Private methods are the details. Each one has a descriptive name that tells you WHAT happens, not HOW.
+        </p>
+      </div>
+      <div class="reveal">
+        <div style="font-family: 'Playfair Display'; font-weight: 900; font-size: 1.5rem; margin-bottom: 0.3em; color: var(--broadsheet-accent);">Leaves</div>
+        <p style="font-family: 'Libre Baskerville'; font-size: 0.95rem; line-height: 1.7; color: var(--broadsheet-ink-light);">
+          Complexity lives at the bottom. flatMap chains, fold, try/catch &mdash; hidden in private methods. The trunk stays clean.
+        </p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ==================== SLIDE 6: READ THE HEADLINES ==================== -->
+<section class="broadsheet halftone" id="slide-headlines">
+  <div class="content" style="text-align: center;">
+    <h2 class="broadsheet-masthead reveal">Read the Headlines</h2>
+    <p class="broadsheet-deck reveal">You understand the full flow without scrolling.</p>
+    <div class="reveal" style="max-width: 900px; width: 90%; margin: 0 auto; position: relative;">
+      <pre style="border-left: 4px solid var(--broadsheet-teal); overflow-x: hidden;"><code class="language-kotlin" style="font-size: clamp(0.8rem, 1.3vw, 1rem); line-height: 1.6; white-space: pre; word-break: keep-all;">validateTemperature(input)
+    .flatMap { fetchGreenBeans(batchId) }
+    .flatMap { beans -&gt; validateBeansReady(beans, input) }
+    .flatMap { beans -&gt; resolveRoastProfile(roasterId, beans) }
+    .flatMap { (beans, profile) -&gt; startRoasting(beans, input, profile) }
+    .onLeft  { logBatchProcessingFailed(roasterId, batchId, it) }</code></pre>
+    </div>
+    <div class="broadsheet-rule" style="max-width: 700px; margin: 2em auto;"></div>
+    <p class="reveal" style="font-family: 'Libre Baskerville'; font-size: 1.2rem; color: var(--broadsheet-ink-light); font-style: italic;">
+      Each line is a headline. The reader decides how deep to go.
+    </p>
+  </div>
+</section>
+
+<!-- ==================== SLIDE 7: THE LEAVES — TABBED ==================== -->
+<section class="broadsheet halftone" id="slide-7" style="padding: 40px 60px;">
+  <div class="content" style="max-width: 1200px;">
+    <h2 class="broadsheet-masthead reveal" style="margin-bottom: 0.2em;">Now Read the Leaves</h2>
+    <p class="broadsheet-deck reveal">Each leaf is self-contained &mdash; one concern, one name. Click to see where it came from.</p>
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-top: 1.2em;">
+
+      <!-- LEAF 1: fetchGreenBeans -->
+      <div class="reveal tabbed-code" data-tabgroup="leaf1">
+        <div class="tab-bar">
+          <button class="tab-btn tab-good active" data-tab="after">&check; After</button>
+          <button class="tab-btn tab-bad" data-tab="before">&cross; Before</button>
+        </div>
+        <div class="tab-panel active" data-tab="after" style="position: relative;">
+          <div class="code-verdict pass">&check;</div>
+          <pre style="border-left: 4px solid var(--broadsheet-teal); border-radius: 0 8px 8px 8px;"><code class="language-kotlin" style="font-size: 0.82rem; line-height: 1.6;">private suspend fun fetchGreenBeans(
+    batchId: BatchId,
+): Either&lt;RoastingFailure, List&lt;Bean&gt;&gt; =
+    repository
+        .fetchBatchById(batchId)
+        .mapLeft { UnexpectedFailure("Failed to fetch batch: $batchId") }
+        .flatMap { batch -&gt;
+            val greenBeans = batch.beans.filter { it.stage == BeanStage.GREEN }
+            if (greenBeans.isEmpty()) {
+                DataInvalidityFailure("No green beans in batch").left()
+            } else {
+                greenBeans.right()
+            }
+        }</code></pre>
+        </div>
+        <div class="tab-panel" data-tab="before" style="position: relative;">
+          <div class="code-verdict fail">&cross;</div>
+          <pre style="border-left: 4px solid var(--broadsheet-accent); border-radius: 0 8px 8px 8px;"><code class="language-kotlin" style="font-size: 0.82rem; line-height: 1.6;">// This was INLINE in the main method:
+.flatMap {
+    repository.fetchBatchById(batchId)
+        .mapLeft { UnexpectedFailure("...") }
+}
+.flatMap { batch -&gt;
+    val greenBeans = batch.beans.filter { ... }
+    if (greenBeans.isEmpty()) {
+        return DataInvalidityFailure("...").left()
+    }
+    greenBeans.forEach { bean -&gt;
+        validateBeanMoisture(bean, input)
+            .onLeft { return it.left() }
+    }
+    roasterCapacityValidator
+        .fetchAndValidate(roasterId, greenBeans.first(), "roast")
+        .map { roaster -&gt; greenBeans to roaster }
+}</code></pre>
+        </div>
+        <p class="tab-hint">fetchGreenBeans &mdash; the "fetch + filter + validate" leaf</p>
+      </div>
+
+      <!-- LEAF 2: startRoasting -->
+      <div class="reveal tabbed-code" data-tabgroup="leaf2">
+        <div class="tab-bar">
+          <button class="tab-btn tab-good active" data-tab="after">&check; After</button>
+          <button class="tab-btn tab-bad" data-tab="before">&cross; Before</button>
+        </div>
+        <div class="tab-panel active" data-tab="after" style="position: relative;">
+          <div class="code-verdict pass">&check;</div>
+          <pre style="border-left: 4px solid var(--broadsheet-teal); border-radius: 0 8px 8px 8px;"><code class="language-kotlin" style="font-size: 0.82rem; line-height: 1.6;">private suspend fun startRoasting(
+    beans: List&lt;Bean&gt;,
+    input: ProcessRoastBatchInput,
+    profile: RoastProfile,
+): Either&lt;RoastingFailure, Unit&gt; =
+    beans.fold(Unit.right() as Either&lt;RoastingFailure, Unit&gt;) { acc, bean -&gt;
+        acc.flatMap {
+            repository.update(
+                bean.copy(
+                    stage = BeanStage.ROASTING,
+                    temperature = input.targetTemp,
+                    roastProfile = profile.id,
+                    startedAt = clock.now(),
+                ),
+            )
+            .onRight { batchEventPort.logTransition(bean.beanId, profile.name) }
+            .mapLeft { IntermittentFailure("Could not update bean: ${it.reason}") }
+        }
+    }</code></pre>
+        </div>
+        <div class="tab-panel" data-tab="before" style="position: relative;">
+          <div class="code-verdict fail">&cross;</div>
+          <pre style="border-left: 4px solid var(--broadsheet-accent); border-radius: 0 8px 8px 8px;"><code class="language-kotlin" style="font-size: 0.82rem; line-height: 1.6;">// This was INLINE in the main method:
+.flatMap { (beans, roaster) -&gt;
+    val roastProfile = roaster.profiles
+        .first { it.origin == beans.first().origin }
+    beans.fold(Unit.right()) { acc, bean -&gt;
+        acc.flatMap {
+            repository.update(bean.copy(
+                stage = BeanStage.ROASTING,
+                temperature = input.targetTemp,
+                roastProfile = roastProfile.id,
+                startedAt = clock.now(),
+            ))
+            .onRight { batchEventPort.logTransition(...) }
+            .mapLeft { IntermittentFailure("...") }
+        }
+    }
+}</code></pre>
+        </div>
+        <p class="tab-hint">startRoasting &mdash; the "mutate + log" leaf</p>
+      </div>
+    </div>
+
+    <div class="broadsheet-rule" style="margin-top: 1.5em;"></div>
+    <p class="reveal" style="font-family: 'Libre Baskerville'; font-style: italic; color: var(--broadsheet-ink-light); text-align: center; margin-top: 1em;">
+      Each leaf does one thing. The name tells you what without reading the body.
+    </p>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════════════
+     ACT 3: IN YOUR LANGUAGE (broadsheet phase)
+     ═══════════════════════════════════════════════════════════════ -->
+
+<!-- ==================== SLIDE 8: LANGUAGE CHOOSER ==================== -->
+<section class="tabloid halftone" id="slide-8" style="padding: 60px;">
+  <div class="content" style="max-width: 1000px; text-align: center;">
+    <div class="tabloid-banner reveal">THE PHILOSOPHY IS LANGUAGE-AGNOSTIC. THE IDIOMS AREN'T.</div>
+    <h2 class="tabloid-headline reveal" style="font-size: 2.8rem; margin-top: 0.5em; margin-bottom: 1em;">
+      Pick your <span class="yellow">language</span>
+    </h2>
+    <div style="display: grid; grid-template-columns: 1fr 1fr 1fr 1fr 1fr; gap: 20px; margin-top: 1.5em;">
+      <div class="reveal" style="background: rgba(255,255,255,0.02); border: 1px solid rgba(232,228,219,0.1); padding: 24px 12px; border-radius: 4px; cursor: pointer;" onclick="document.getElementById('slide-lang-kotlin').scrollIntoView({behavior:'smooth'})">
+        <div style="font-family: 'Playfair Display'; font-weight: 900; font-size: 1.6rem; color: var(--tabloid-paper); margin-bottom: 0.3em;">Kotlin</div>
+        <div style="font-family: 'IBM Plex Mono'; font-size: 0.65rem; color: var(--tabloid-yellow); margin-bottom: 0.5em;">?: return &middot; Arrow</div>
+        <div style="font-family: 'Libre Baskerville'; font-size: 0.7rem; color: rgba(232,228,219,0.5);">Backend &middot; Android</div>
+      </div>
+      <div class="reveal" style="background: rgba(255,255,255,0.02); border: 1px solid rgba(232,228,219,0.1); padding: 24px 12px; border-radius: 4px; cursor: pointer;" onclick="document.getElementById('slide-lang-java').scrollIntoView({behavior:'smooth'})">
+        <div style="font-family: 'Playfair Display'; font-weight: 900; font-size: 1.6rem; color: var(--tabloid-paper); margin-bottom: 0.3em;">Java</div>
+        <div style="font-family: 'IBM Plex Mono'; font-size: 0.65rem; color: var(--tabloid-yellow); margin-bottom: 0.5em;">Optional &middot; vavr</div>
+        <div style="font-family: 'Libre Baskerville'; font-size: 0.7rem; color: rgba(232,228,219,0.5);">Enterprise &middot; Spring</div>
+      </div>
+      <div class="reveal" style="background: rgba(255,255,255,0.02); border: 1px solid rgba(232,228,219,0.1); padding: 24px 12px; border-radius: 4px; cursor: pointer;" onclick="document.getElementById('slide-lang-swift').scrollIntoView({behavior:'smooth'})">
+        <div style="font-family: 'Playfair Display'; font-weight: 900; font-size: 1.6rem; color: var(--tabloid-paper); margin-bottom: 0.3em;">Swift</div>
+        <div style="font-family: 'IBM Plex Mono'; font-size: 0.65rem; color: var(--tabloid-yellow); margin-bottom: 0.5em;">guard let &middot; Result</div>
+        <div style="font-family: 'Libre Baskerville'; font-size: 0.7rem; color: rgba(232,228,219,0.5);">iOS &middot; macOS</div>
+      </div>
+      <div class="reveal" style="background: rgba(255,255,255,0.02); border: 1px solid rgba(232,228,219,0.1); padding: 24px 12px; border-radius: 4px; cursor: pointer;" onclick="document.getElementById('slide-lang-ts').scrollIntoView({behavior:'smooth'})">
+        <div style="font-family: 'Playfair Display'; font-weight: 900; font-size: 1.6rem; color: var(--tabloid-paper); margin-bottom: 0.3em;">TypeScript</div>
+        <div style="font-family: 'IBM Plex Mono'; font-size: 0.65rem; color: var(--tabloid-yellow); margin-bottom: 0.5em;">neverthrow &middot; Effect</div>
+        <div style="font-family: 'Libre Baskerville'; font-size: 0.7rem; color: rgba(232,228,219,0.5);">Full-stack &middot; Node</div>
+      </div>
+      <div class="reveal" style="background: rgba(255,255,255,0.02); border: 1px solid rgba(232,228,219,0.1); padding: 24px 12px; border-radius: 4px; cursor: pointer;" onclick="document.getElementById('slide-lang-python').scrollIntoView({behavior:'smooth'})">
+        <div style="font-family: 'Playfair Display'; font-weight: 900; font-size: 1.6rem; color: var(--tabloid-paper); margin-bottom: 0.3em;">Python</div>
+        <div style="font-family: 'IBM Plex Mono'; font-size: 0.65rem; color: var(--tabloid-yellow); margin-bottom: 0.5em;">returns &middot; result</div>
+        <div style="font-family: 'Libre Baskerville'; font-size: 0.7rem; color: rgba(232,228,219,0.5);">Backend &middot; ML</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ==================== SLIDE 9: KOTLIN ==================== -->
+<section class="broadsheet halftone" id="slide-lang-kotlin" style="padding: 40px 60px;">
+  <div class="content" style="max-width: 1100px;">
+    <h2 class="broadsheet-masthead reveal" style="font-size: 2.2rem;">Kotlin</h2>
+    <p class="broadsheet-deck reveal">Backend use cases and Android ViewModels &mdash; same newspaper structure.</p>
+    <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px;">
+      <div class="reveal" style="position: relative;">
+        <div class="code-verdict fail">&cross;</div>
+        <div class="code-caption bad">BEFORE &mdash; TANGLED VIEWMODEL</div>
+        <pre style="border-left: 4px solid var(--broadsheet-accent);"><code class="language-kotlin" style="font-size: 0.68rem; line-height: 1.6;">fun onStartTapped(batchId: BatchId) {
+    _state.value = Loading
+    viewModelScope.launch {
+        val batch = repo.fetchBatch(batchId)
+        if (batch == null) {
+            _state.value = Error("not found")
+            return@launch
+        }
+        val profile = profiles.find {
+            it.origin == batch.origin
+        }
+        if (profile == null) {
+            _state.value = Error("no profile")
+            return@launch
+        }
+        try {
+            val result = roastApi.start(batch, profile)
+            _state.value = Roasting(result)
+            monitor.success()
+        } catch (e: Exception) {
+            _state.value = Error(e.message ?: "")
+            monitor.failure(e)
+        }
+    }
+}</code></pre>
+      </div>
+      <div class="reveal" style="position: relative;">
+        <div class="code-verdict pass">&check;</div>
+        <div class="code-caption good">AFTER &mdash; BACKEND USE CASE</div>
+        <pre style="border-left: 4px solid var(--broadsheet-teal);"><code class="language-kotlin" style="font-size: 0.68rem; line-height: 1.6;">suspend fun execute(
+    request: TriggerRoastRequest,
+): Either&lt;RoastFailure, RoastResponse&gt; =
+    lookupBatch(request.batchId)
+        .flatMap { batch -&gt;
+            resolveProfile(request, batch)
+        }
+        .flatMap { (batch, profile) -&gt;
+            startRoasting(batch, profile)
+        }
+        .also { monitor.reportResult(it) }</code></pre>
+      </div>
+      <div class="reveal" style="position: relative;">
+        <div class="code-verdict pass">&check;</div>
+        <div class="code-caption good">AFTER &mdash; ANDROID VIEWMODEL</div>
+        <pre style="border-left: 4px solid var(--broadsheet-teal);"><code class="language-kotlin" style="font-size: 0.68rem; line-height: 1.6;">class RoastViewModel(
+    private val startRoast: StartRoastUseCase,
+) : ViewModel() {
+
+    private val _state = MutableStateFlow&lt;RoastUiState&gt;(Idle)
+    val state = _state.asStateFlow()
+
+    fun onStartTapped(batchId: BatchId) {
+        _state.value = Loading
+        viewModelScope.launch {
+            startRoast.execute(batchId).fold(
+                ifLeft = { _state.value = Error(it.reason) },
+                ifRight = { _state.value = Roasting(it) },
+            )
+        }
+    }
+}</code></pre>
+      </div>
+    </div>
+    <p class="reveal" style="font-family: 'IBM Plex Mono'; font-size: 0.75rem; color: var(--broadsheet-ink-light); margin-top: 1.2em; text-align: center;">
+      Libraries: <strong>Arrow</strong> (Raise, either { }) &middot; <strong>kotlin-result</strong> (andThen) &middot; or just <strong>nullable + ?: return</strong>
+    </p>
+  </div>
+</section>
+
+<!-- ==================== SLIDE: JAVA ==================== -->
+<section class="broadsheet halftone" id="slide-lang-java" style="padding: 40px 60px;">
+  <div class="content" style="max-width: 1100px;">
+    <h2 class="broadsheet-masthead reveal" style="font-size: 2.2rem;">Java</h2>
+    <p class="broadsheet-deck reveal">The language that needs Primera Plana the most. Verbosity is not an excuse for chaos.</p>
+    <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px;">
+      <div class="reveal" style="position: relative;">
+        <div class="code-verdict fail">&cross;</div>
+        <div class="code-caption bad">BEFORE &mdash; OPTIONAL PYRAMID + SIDE EFFECTS</div>
+        <pre style="border-left: 4px solid var(--broadsheet-accent);"><code class="language-java" style="font-size: 0.64rem; line-height: 1.6;">public void validateForRedemption(
+    String promoCode, String region, String customerId
+) {
+    if (StringUtils.isBlank(promoCode)) {
+        log.info("process=promo_validation, result=invalid_format,"
+            + " customerId={}", customerId);
+        throw new ValidationException(INVALID_FORMAT);
+    }
+    UUID customerUuid = safeUuidFromString(customerId);
+
+    Promotion promo = promotionRepository
+        .findByCodeIgnoreCase(promoCode)
+        .orElseThrow(() -&gt; {
+            log.info("process=promo_validation, result=not_found,"
+                + " customerId={}", customerId);
+            return new ValidationException(PROMO_NOT_FOUND);
+        });
+
+    Optional.ofNullable(customerUuid)
+        .flatMap(id -&gt; redemptionRepo
+            .findByPromoIdAndCustomerId(promo.getId(), id))
+        .ifPresent(r -&gt; {
+            log.info("process=promo_validation, result=redeemed,"
+                + " customerId={}, promoId={}", customerId,
+                promo.getId());
+            throw new ValidationException(ALREADY_REDEEMED);
+        });
+
+    promo.getRules().forEach(rule -&gt;
+        Optional.ofNullable(customerUuid)
+            .flatMap(id -&gt; ruleUsageRepo
+                .findByCustomerIdAndRuleId(id, rule.getId()))
+            .ifPresent(usage -&gt; {
+                log.info("process=promo_validation, result=used,"
+                    + " customerId={}", customerId);
+                throw new ValidationException(RULE_ALREADY_USED);
+            }));
+}</code></pre>
+      </div>
+      <div class="reveal" style="position: relative;">
+        <div class="code-verdict pass">&check;</div>
+        <div class="code-caption good">AFTER &mdash; GUARD METHODS + EARLY THROW</div>
+        <pre style="border-left: 4px solid var(--broadsheet-teal);"><code class="language-java" style="font-size: 0.64rem; line-height: 1.6;">public void validateForRedemption(
+    String promoCode, String region, String customerId
+) {
+    validateFormat(promoCode, customerId);
+
+    var promo = findPromotionOrThrow(promoCode, customerId);
+    var customerUuid = safeUuidFromString(customerId);
+
+    ensureNotRedeemedByCustomer(promo, customerUuid);
+    ensureRulesNotExhausted(promo, customerUuid);
+}
+
+private void ensureNotRedeemedByCustomer(
+    Promotion promo, UUID customerId
+) {
+    redemptionRepo
+        .findByPromoIdAndCustomerId(promo.getId(), customerId)
+        .ifPresent(r -&gt; {
+            logValidationFailed(customerId, promo, "redeemed");
+            throw new ValidationException(ALREADY_REDEEMED);
+        });
+}
+
+private Promotion findPromotionOrThrow(String code, String customerId) {
+    return promotionRepository
+        .findByCodeIgnoreCase(code)
+        .orElseThrow(() -&gt; {
+            logValidationFailed(customerId, null, "not_found");
+            return new ValidationException(PROMO_NOT_FOUND);
+        });
+}</code></pre>
+      </div>
+      <div class="reveal" style="position: relative;">
+        <div class="code-verdict pass">&check;</div>
+        <div class="code-caption good">AFTER &mdash; VAVR EITHER PIPELINE</div>
+        <pre style="border-left: 4px solid var(--broadsheet-teal);"><code class="language-java" style="font-size: 0.64rem; line-height: 1.6;">public Either&lt;RedemptionFailure, Promotion&gt; validate(
+    String promoCode, String region, String customerId
+) {
+    return validateFormat(promoCode)
+        .flatMap(code -&gt; findPromotion(code))
+        .flatMap(promo -&gt; ensureNotRedeemed(promo, customerId))
+        .flatMap(promo -&gt; ensureRegionEligible(promo, region))
+        .flatMap(promo -&gt; ensureRulesAvailable(promo, customerId))
+        .peek(promo -&gt; log.info(
+            "Validation passed for promo={}", promo.getId()
+        ));
+}
+
+// Each step is a one-concern method:
+private Either&lt;RedemptionFailure, Promotion&gt; findPromotion(String code) {
+    return promotionRepository
+        .findByCodeIgnoreCase(code)
+        .map(Either::&lt;RedemptionFailure, Promotion&gt;right)
+        .orElse(Either.left(new PromoNotFound(code)));
+}
+
+private Either&lt;RedemptionFailure, Promotion&gt; ensureNotRedeemed(
+    Promotion promo, String customerId
+) {
+    return redemptionRepo
+        .findByPromoIdAndCustomerId(promo.getId(), toUuid(customerId))
+        .map(r -&gt; Either.&lt;RedemptionFailure, Promotion&gt;left(
+            new AlreadyRedeemed(customerId)))
+        .orElse(Either.right(promo));
+}</code></pre>
+      </div>
+    </div>
+    <p class="reveal" style="font-family: 'IBM Plex Mono'; font-size: 0.75rem; color: var(--broadsheet-ink-light); margin-top: 1.2em; text-align: center;">
+      Libraries: <strong>vavr</strong> (Either, Try, Option) &middot; <strong>jOOL</strong> (Seq) &middot; or just <strong>extracted guard methods + early throw</strong>
+    </p>
+  </div>
+</section>
+
+<!-- ==================== SLIDE 10: SWIFT ==================== -->
+<section class="broadsheet halftone" id="slide-lang-swift" style="padding: 40px 60px;">
+  <div class="content" style="max-width: 1100px;">
+    <h2 class="broadsheet-masthead reveal" style="font-size: 2.2rem;">Swift</h2>
+    <p class="broadsheet-deck reveal">guard-let IS the newspaper style. Swift has it built in.</p>
+    <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px;">
+      <div class="reveal" style="position: relative;">
+        <div class="code-verdict fail">&cross;</div>
+        <div class="code-caption bad">BEFORE &mdash; NESTED IF-LET PYRAMID</div>
+        <pre style="border-left: 4px solid var(--broadsheet-accent);"><code class="language-swift" style="font-size: 0.68rem; line-height: 1.6;">func startRoast(batchId: String) {
+    if isEnabled {
+        if let batch = repository.fetch(id: batchId) {
+            if let profile = profileStore.match(
+                origin: batch.origin
+            ) {
+                if validateTemperature(batch, profile) {
+                    isRoasting = true
+                    roastService.begin(
+                        batch: batch,
+                        profile: profile
+                    ) { result in
+                        switch result {
+                        case .success(let b):
+                            self.batch = b
+                        case .failure(let e):
+                            self.error = e
+                        }
+                        self.isRoasting = false
+                    }
+                } else {
+                    error = .tempOutOfRange
+                }
+            } else {
+                error = .noProfileForOrigin(batch.origin)
+            }
+        } else {
+            error = .batchNotFound(batchId)
+        }
+    }
+}</code></pre>
+      </div>
+      <div class="reveal" style="position: relative;">
+        <div class="code-verdict pass">&check;</div>
+        <div class="code-caption good">AFTER &mdash; @OBSERVABLE VIEWMODEL</div>
+        <pre style="border-left: 4px solid var(--broadsheet-teal);"><code class="language-swift" style="font-size: 0.68rem; line-height: 1.6;">@Observable
+final class RoastSessionViewModel {
+    var batch: RoastBatch?
+    var isRoasting = false
+    var error: RoastError?
+
+    func startRoast(batchId: String) {
+        guard isEnabled else { return }
+        guard let batch = resolveBatch(batchId) else { return }
+        guard let profile = resolveProfile(batch) else { return }
+        guard validateTemperature(batch, profile) else { return }
+
+        beginRoasting(batch: batch, profile: profile)
+    }
+
+    private func resolveBatch(_ id: String) -&gt; RoastBatch? {
+        let batch = repository.fetch(id: id)
+        if batch == nil { error = .batchNotFound(id) }
+        return batch
+    }
+
+    private func resolveProfile(_ batch: RoastBatch) -&gt; RoastProfile? {
+        let profile = profileStore.match(origin: batch.origin)
+        if profile == nil { error = .noProfileForOrigin(batch.origin) }
+        return profile
+    }
+}</code></pre>
+      </div>
+      <div class="reveal" style="position: relative;">
+        <div class="code-verdict pass">&check;</div>
+        <div class="code-caption good">AFTER &mdash; ASYNC + RESULT</div>
+        <pre style="border-left: 4px solid var(--broadsheet-teal);"><code class="language-swift" style="font-size: 0.68rem; line-height: 1.6;">func processRoastBatch(
+    _ batchId: String
+) async -&gt; Result&lt;RoastBatch, RoastError&gt; {
+    guard let batch = await fetchBatch(batchId) else {
+        return .failure(.batchNotFound(batchId))
+    }
+    guard let profile = resolveProfile(for: batch) else {
+        return .failure(.noProfileForOrigin(batch.origin))
+    }
+    guard validateCapacity(batch, profile) else {
+        return .failure(.capacityExceeded)
+    }
+
+    return await startRoasting(
+        batch: batch,
+        profile: profile
+    )
+}
+
+// View:
+struct RoastView: View {
+    @State private var vm = RoastSessionViewModel()
+
+    var body: some View {
+        VStack {
+            if let batch = vm.batch {
+                BatchDetailView(batch: batch)
+            }
+            if let error = vm.error {
+                ErrorBanner(error.localizedDescription)
+            }
+        }
+    }
+}</code></pre>
+      </div>
+    </div>
+    <p class="reveal" style="font-family: 'IBM Plex Mono'; font-size: 0.75rem; color: var(--broadsheet-ink-light); margin-top: 1.2em; text-align: center;">
+      Swift's <strong>Result&lt;Success, Failure&gt;</strong> is in the stdlib. <strong>guard let</strong> + early return = Primera Plana for free.
+    </p>
+  </div>
+</section>
+
+<!-- ==================== SLIDE 11: TYPESCRIPT ==================== -->
+<section class="broadsheet halftone" id="slide-lang-ts" style="padding: 40px 60px;">
+  <div class="content" style="max-width: 1100px;">
+    <h2 class="broadsheet-masthead reveal" style="font-size: 2.2rem;">TypeScript</h2>
+    <p class="broadsheet-deck reveal">API layers, React hooks, services &mdash; same philosophy everywhere.</p>
+    <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px;">
+      <div class="reveal" style="position: relative;">
+        <div class="code-verdict fail">&cross;</div>
+        <div class="code-caption bad">BEFORE &mdash; NESTED TRY/CATCH</div>
+        <pre style="border-left: 4px solid var(--broadsheet-accent);"><code class="language-typescript" style="font-size: 0.68rem; line-height: 1.6;">async function loadDashboard() {
+  setLoading(true);
+  try {
+    const stats = await fetch(`${BASE}/stats`);
+    if (!stats.ok) {
+      setError("Failed to load stats");
+      setLoading(false);
+      return;
+    }
+    const batches = await fetch(`${BASE}/batches`);
+    if (!batches.ok) {
+      setError("Failed to load batches");
+      setLoading(false);
+      return;
+    }
+    const statsData = await stats.json();
+    const batchData = await batches.json();
+    setStats(statsData);
+    setBatches(batchData.batches);
+    const subs = await Promise.all(
+      batchData.batches
+        .filter((b: any) =&gt; b.status === "active")
+        .map((b: any) =&gt;
+          fetch(`${BASE}/batches/${b.id}/subs`)
+            .then(r =&gt; r.json())
+        )
+    );
+    setSubscriptions(subs.flat());
+    setError(null);
+  } catch (err: any) {
+    setError(err.message || "Unknown error");
+  } finally {
+    setLoading(false);
+  }
+}</code></pre>
+      </div>
+      <div class="reveal" style="position: relative;">
+        <div class="code-verdict pass">&check;</div>
+        <div class="code-caption good">AFTER &mdash; TYPED API LAYER</div>
+        <pre style="border-left: 4px solid var(--broadsheet-teal);"><code class="language-typescript" style="font-size: 0.68rem; line-height: 1.6;">async function request&lt;T&gt;(path: string, options?: RequestInit): Promise&lt;T&gt; {
+  const res = await fetch(`${BASE}${path}`, {
+    headers: { "Content-Type": "application/json" },
+    ...options,
+  });
+  if (!res.ok) {
+    const body = await res.json().catch(() =&gt; ({}));
+    throw new Error(body?.error?.message || `HTTP ${res.status}`);
+  }
+  return res.json();
+}
+
+export const api = {
+  stats: () =&gt; request&lt;Stats&gt;("/stats"),
+  batches: {
+    list: () =&gt; request&lt;{ batches: RoastBatch[] }&gt;("/batches"),
+    get: (id: string) =&gt; request&lt;RoastBatch&gt;(`/batches/${id}`),
+    subs: (id: string) =&gt; request&lt;Subscription[]&gt;(`/batches/${id}/subs`),
+  },
+};</code></pre>
+      </div>
+      <div class="reveal" style="position: relative;">
+        <div class="code-verdict pass">&check;</div>
+        <div class="code-caption good">AFTER &mdash; REACT HOOK</div>
+        <pre style="border-left: 4px solid var(--broadsheet-teal);"><code class="language-typescript" style="font-size: 0.68rem; line-height: 1.6;">function useDashboard() {
+  const [stats, setStats] = useState&lt;Stats | null&gt;(null);
+  const [error, setError] = useState&lt;string | null&gt;(null);
+
+  const load = useCallback(async () =&gt; {
+    try {
+      const [statsRes, batchRes] = await Promise.all([
+        api.stats(),
+        api.batches.list(),
+      ]);
+      setStats(statsRes);
+      setBatches(batchRes.batches);
+
+      const activeSubs = await loadActiveSubscriptions(batchRes.batches);
+      setSubscriptions(activeSubs);
+      setError(null);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Failed");
+    }
+  }, []);
+
+  useEffect(() =&gt; { load(); }, [load]);
+  return { stats, error, reload: load };
+}</code></pre>
+      </div>
+    </div>
+    <p class="reveal" style="font-family: 'IBM Plex Mono'; font-size: 0.75rem; color: var(--broadsheet-ink-light); margin-top: 1.2em; text-align: center;">
+      Libraries: <strong>neverthrow</strong> (Result + andThen) &middot; <strong>Effect</strong> (typed effects) &middot; or just <strong>early returns + typed API wrappers</strong>
+    </p>
+  </div>
+</section>
+
+<!-- ==================== SLIDE 12: PYTHON ==================== -->
+<section class="broadsheet halftone" id="slide-lang-python" style="padding: 40px 60px;">
+  <div class="content" style="max-width: 1100px;">
+    <h2 class="broadsheet-masthead reveal" style="font-size: 2.2rem;">Python</h2>
+    <p class="broadsheet-deck reveal">Frozen dataclasses, guard clauses, typed returns &mdash; Pythonic and structured.</p>
+    <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px;">
+      <div class="reveal" style="position: relative;">
+        <div class="code-verdict fail">&cross;</div>
+        <div class="code-caption bad">BEFORE &mdash; NESTED TRY/EXCEPT</div>
+        <pre style="border-left: 4px solid var(--broadsheet-accent);"><code class="language-python" style="font-size: 0.68rem; line-height: 1.6;">def start_batch(self, batch_id: str):
+    try:
+        batch = self._repo.get(batch_id)
+        if batch is not None:
+            profile = None
+            for p in self._profiles.all():
+                if p.origin == batch.origin:
+                    profile = p
+                    break
+            if profile is not None:
+                if self._check_capacity(batch, profile):
+                    try:
+                        result = self._roast_api.start(
+                            batch, profile
+                        )
+                        self._repo.update_status(
+                            batch_id, "roasting"
+                        )
+                        logger.info("Started %s", batch_id)
+                        return result
+                    except ApiError as e:
+                        logger.error("API failed: %s", e)
+                        return None
+                else:
+                    logger.warning("No capacity")
+                    return None
+            else:
+                logger.warning("No profile for %s", batch.origin)
+                return None
+        else:
+            logger.warning("Batch not found: %s", batch_id)
+            return None
+    except DatabaseError as e:
+        logger.error("DB error: %s", e)
+        return None</code></pre>
+      </div>
+      <div class="reveal" style="position: relative;">
+        <div class="code-verdict pass">&check;</div>
+        <div class="code-caption good">AFTER &mdash; GUARD CLAUSES</div>
+        <pre style="border-left: 4px solid var(--broadsheet-teal);"><code class="language-python" style="font-size: 0.68rem; line-height: 1.6;">@dataclass(frozen=True)
+class RoastResult:
+    batch_id: str
+    profile: RoastProfile
+    started_at: float
+    beans_processed: int
+
+class RoastService:
+    def start_batch(self, batch_id: str) -&gt; RoastResult | None:
+        batch = self._fetch_batch(batch_id)
+        if batch is None:
+            return None
+
+        profile = self._resolve_profile(batch)
+        if profile is None:
+            return None
+
+        if not self._validate_capacity(batch, profile):
+            return None
+
+        return self._begin_roasting(batch, profile)
+
+    def _fetch_batch(self, batch_id: str) -&gt; RoastBatch | None:
+        try:
+            return self._repo.get(batch_id)
+        except DatabaseError:
+            logger.warning("Batch not found: %s", batch_id)
+            return None</code></pre>
+      </div>
+      <div class="reveal" style="position: relative;">
+        <div class="code-verdict pass">&check;</div>
+        <div class="code-caption good">AFTER &mdash; ASYNC + ABC</div>
+        <pre style="border-left: 4px solid var(--broadsheet-teal);"><code class="language-python" style="font-size: 0.68rem; line-height: 1.6;">class RoastProvider(ABC):
+    @abstractmethod
+    async def initialize(self, config: dict) -&gt; None: ...
+
+    @abstractmethod
+    async def process_batch(
+        self, batch: RoastBatch
+    ) -&gt; RoastBatch: ...
+
+
+class ProviderManager:
+    async def activate(self, provider_id: str) -&gt; RoastProvider:
+        if not self._has_capacity(provider_id):
+            await self._evict_least_recent()
+
+        provider = self._registry.get(provider_id)
+        if provider is None:
+            raise ProviderNotFoundError(provider_id)
+
+        try:
+            await provider.initialize(self._config)
+        except Exception as e:
+            self._bus.emit(Event(type="failed", detail=str(e)))
+            raise
+        finally:
+            self._loading = None
+
+        self._active = provider
+        return provider</code></pre>
+      </div>
+    </div>
+    <p class="reveal" style="font-family: 'IBM Plex Mono'; font-size: 0.75rem; color: var(--broadsheet-ink-light); margin-top: 1.2em; text-align: center;">
+      Libraries: <strong>dry-python/returns</strong> (Result, flow, bind) &middot; <strong>rustedpy/result</strong> (Ok/Err) &middot; or just <strong>Optional + guard clauses</strong>
+    </p>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════════════
+     ACT 4: CLOSE (broadsheet phase)
+     ═══════════════════════════════════════════════════════════════ -->
+
+<!-- ==================== SLIDE 13: FULLY AUTOMATED ==================== -->
+<section class="broadsheet halftone" id="slide-13">
+  <div class="content" style="text-align: center;">
+    <div class="broadsheet-rule thick"></div>
+    <h2 class="broadsheet-masthead reveal">It's Fully Automated</h2>
+    <p class="broadsheet-deck reveal">
+      A <code>.md</code> file + an AI coding agent = every PR follows this style automatically.
+    </p>
+    <div style="display: flex; align-items: center; justify-content: center; gap: 32px; margin: 2em 0;">
+      <div class="reveal" style="background: #f0ece4; border: 1px solid var(--broadsheet-rule); padding: 20px 28px; font-family: 'IBM Plex Mono'; font-size: 0.85rem; text-align: left;">
+        primera-plana/guides/kotlin.md<br>
+        <span style="color: var(--broadsheet-ink-light);">~500 lines of rules</span>
+      </div>
+      <div class="reveal" style="font-family: 'Playfair Display'; font-size: 2rem; color: var(--broadsheet-teal);">&rarr;</div>
+      <div class="reveal" style="background: #f0ece4; border: 1px solid var(--broadsheet-rule); padding: 20px 28px; font-family: 'IBM Plex Mono'; font-size: 0.85rem; text-align: left;">
+        AI Coding Agent<br>
+        <span style="color: var(--broadsheet-ink-light);">reads &amp; applies on every PR</span>
+      </div>
+      <div class="reveal" style="font-family: 'Playfair Display'; font-size: 2rem; color: var(--broadsheet-teal);">&rarr;</div>
+      <div class="reveal" style="background: #f0ece4; border: 1px solid var(--broadsheet-rule); padding: 20px 28px; font-family: 'IBM Plex Mono'; font-size: 0.85rem; text-align: left;">
+        Consistent code<br>
+        <span style="color: var(--broadsheet-ink-light);">zero manual formatting</span>
+      </div>
+    </div>
+    <div class="broadsheet-rule"></div>
+    <div class="reveal" style="margin-top: 1.5em;">
+      <p style="font-family: 'Libre Baskerville'; font-size: 1.1rem; color: var(--broadsheet-ink-light); line-height: 1.8;">
+        Point the agent at your style guide. It refactors to match.<br>
+        Tests pass. Linter clean. Zero manual work.
+      </p>
+    </div>
+  </div>
+</section>
+
+<!-- ==================== SLIDE 14: START TODAY ==================== -->
+<section class="broadsheet halftone" id="slide-14">
+  <div class="content" style="text-align: center;">
+    <div class="broadsheet-rule thick"></div>
+    <h2 class="broadsheet-masthead reveal" style="font-size: 3.5rem;">Start Today</h2>
+    <div class="broadsheet-rule"></div>
+    <div style="max-width: 600px; margin: 2em auto; text-align: left;">
+      <ul class="cta-list">
+        <li class="reveal">Keep <code>execute()</code> under 10 lines &mdash; it's your table of contents</li>
+        <li class="reveal">Name every step &mdash; the name IS the documentation</li>
+        <li class="reveal">Push complexity down &mdash; the trunk stays clean, leaves do the work</li>
+      </ul>
+    </div>
+    <div class="broadsheet-rule" style="max-width: 600px; margin: 2em auto;"></div>
+    <div class="reveal" style="margin-top: 1.5em;">
+      <p style="font-family: 'IBM Plex Mono'; font-size: 0.9rem; color: var(--broadsheet-ink-light);">
+        primera-plana/guides/kotlin.md
+      </p>
+      <p style="font-family: 'Libre Baskerville'; font-style: italic; font-size: 1.1rem; color: var(--broadsheet-teal); margin-top: 1em;">
+        "The reader's time is more expensive than the writer's."
+      </p>
+    </div>
+  </div>
+</section>
+
+<!-- ==================== SCROLL INDICATOR ==================== -->
+<div class="scroll-indicator" id="scroll-indicator">&darr; scroll</div>
+
+<script>
+(function() {
+  'use strict';
+
+  // ============ HIGHLIGHT.JS INIT ============
+  hljs.highlightAll();
+
+  // ============ INTERSECTION OBSERVER FOR REVEALS ============
+
+  const revealObserver = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting && !entry.target.dataset.revealed) {
+        const el = entry.target;
+        el.dataset.revealed = 'true';
+        const delay = el.dataset.delay || 0;
+
+        setTimeout(() => {
+          anime({
+            targets: el,
+            opacity: [0, 1],
+            translateY: [30, 0],
+            duration: 700,
+            easing: 'easeOutCubic'
+          });
+        }, parseInt(delay));
+      }
+    });
+  }, {
+    threshold: 0.15,
+    rootMargin: '0px 0px -50px 0px'
+  });
+
+  // Stagger delays within each section
+  document.querySelectorAll('section').forEach(section => {
+    const reveals = section.querySelectorAll('.reveal');
+    reveals.forEach((el, i) => {
+      el.dataset.delay = i * 150;
+      revealObserver.observe(el);
+    });
+  });
+
+  // ============ SCROLL INDICATOR ============
+
+  const indicator = document.getElementById('scroll-indicator');
+  let lastScroll = 0;
+
+  window.addEventListener('scroll', () => {
+    const scrollTop = window.scrollY || document.documentElement.scrollTop;
+    if (scrollTop > 200) {
+      indicator.classList.add('hidden');
+    } else {
+      indicator.classList.remove('hidden');
+    }
+    lastScroll = scrollTop;
+  }, { passive: true });
+
+  // ============ HALFTONE PARALLAX (subtle) ============
+
+  window.addEventListener('scroll', () => {
+    const scrollY = window.scrollY;
+    document.querySelectorAll('.halftone::before').forEach(el => {
+      // Subtle shift of halftone pattern
+    });
+  }, { passive: true });
+
+  // ============ CODE LINE HIGHLIGHT EFFECT (slide 8) ============
+
+  const slide8Observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting && !entry.target.dataset.animated) {
+        entry.target.dataset.animated = 'true';
+        const codeEl = entry.target.querySelector('code');
+        if (!codeEl) return;
+        // Split into lines and animate each one appearing
+        const lines = codeEl.innerHTML.split('\n');
+        codeEl.innerHTML = lines.map((line, i) =>
+          `<span class="code-line" style="display:block; opacity:0; transform:translateX(-10px);">${line}</span>`
+        ).join('');
+        codeEl.querySelectorAll('.code-line').forEach((line, i) => {
+          anime({
+            targets: line,
+            opacity: [0, 1],
+            translateX: [-10, 0],
+            duration: 500,
+            delay: 300 + i * 150,
+            easing: 'easeOutCubic'
+          });
+        });
+      }
+    });
+  }, { threshold: 0.4 });
+
+  const slideHeadlines = document.getElementById('slide-headlines');
+  if (slideHeadlines) slide8Observer.observe(slideHeadlines);
+
+  // ============ KEYBOARD NAVIGATION ============
+
+  const sections = document.querySelectorAll('section');
+  let currentSlide = 0;
+  let isNavigating = false;
+
+  function getCurrentSlideIndex() {
+    const scrollY = window.scrollY;
+    const viewportHeight = window.innerHeight;
+    return Math.round(scrollY / viewportHeight);
+  }
+
+  function goToSlide(index) {
+    if (index < 0 || index >= sections.length || isNavigating) return;
+    isNavigating = true;
+    currentSlide = index;
+    sections[index].scrollIntoView({ behavior: 'smooth' });
+
+    // Reveal unrevealed elements on the target slide with staggered animation
+    setTimeout(() => {
+      const unrevealed = sections[index].querySelectorAll('.reveal:not([data-revealed])');
+      unrevealed.forEach((el, i) => {
+        el.dataset.revealed = 'true';
+        anime({
+          targets: el,
+          opacity: [0, 1],
+          translateY: [20, 0],
+          duration: 600,
+          delay: i * 80,
+          easing: 'easeOutCubic'
+        });
+      });
+    }, 300);
+
+    setTimeout(() => { isNavigating = false; }, 700);
+  }
+
+  document.addEventListener('keydown', (e) => {
+    switch (e.key) {
+      case 'ArrowDown':
+      case 'ArrowRight':
+      case ' ':
+        e.preventDefault();
+        currentSlide = getCurrentSlideIndex();
+        goToSlide(currentSlide + 1);
+        break;
+      case 'ArrowUp':
+      case 'ArrowLeft':
+        e.preventDefault();
+        currentSlide = getCurrentSlideIndex();
+        goToSlide(currentSlide - 1);
+        break;
+      case 'Home':
+        e.preventDefault();
+        goToSlide(0);
+        break;
+      case 'End':
+        e.preventDefault();
+        goToSlide(sections.length - 1);
+        break;
+    }
+  });
+
+  // ============ TABBED CODE INTERACTION ============
+
+  document.querySelectorAll('.tabbed-code').forEach(container => {
+    const buttons = container.querySelectorAll('.tab-btn');
+    const panels = container.querySelectorAll('.tab-panel');
+
+    buttons.forEach(btn => {
+      btn.addEventListener('click', () => {
+        const targetTab = btn.dataset.tab;
+
+        // Update buttons
+        buttons.forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+
+        // Update panels with crossfade
+        panels.forEach(panel => {
+          if (panel.dataset.tab === targetTab) {
+            panel.classList.add('active');
+            panel.style.opacity = '0';
+            anime({
+              targets: panel,
+              opacity: [0, 1],
+              duration: 250,
+              easing: 'easeOutCubic'
+            });
+            // Re-highlight code in newly shown panel
+            panel.querySelectorAll('pre code').forEach(block => {
+              hljs.highlightElement(block);
+            });
+          } else {
+            panel.classList.remove('active');
+          }
+        });
+      });
+    });
+  });
+
+})();
+</script>
+
+</body>
+</html>
