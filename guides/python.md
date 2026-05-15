@@ -35,7 +35,7 @@ Tostado is a specialty coffee subscription service. Customers place recurring or
 #### Early Return Style (Pythonic)
 
 ```python
-PROCESS = "create-subscription-order"
+logger = structlog.get_logger(__name__)
 
 
 class CreateSubscriptionOrderUseCase:
@@ -73,7 +73,7 @@ class CreateSubscriptionOrderUseCase:
     def _resolve_subscription(self, request: PlaceOrderRequest) -> Optional[Subscription]:
         subscription = self._subscription_finder.find_active(request.customer_id)
         if subscription is None:
-            logger.info(f"{PROCESS} ORDER_SKIPPED customer={request.customer_id} reason='no active subscription'")
+            logger.info("Order skipped", customer_id=request.customer_id, reason="no active subscription")
             return None
         return subscription
 
@@ -85,7 +85,7 @@ class CreateSubscriptionOrderUseCase:
             subscription.roast_level,
         )
         if roast is None:
-            logger.info(f"{PROCESS} ORDER_SKIPPED customer={subscription.customer_id} reason='roast unavailable'")
+            logger.info("Order skipped", customer_id=subscription.customer_id, reason="roast unavailable")
             return None
         return roast
 
@@ -93,7 +93,7 @@ class CreateSubscriptionOrderUseCase:
         try:
             return self._payment_processor.charge(subscription.payment_method, roast.price)
         except PaymentError as e:
-            logger.warning(f"{PROCESS} PAYMENT_FAILED customer={subscription.customer_id} error={e}")
+            logger.warning("Payment failed", customer_id=subscription.customer_id, error=str(e))
             return None
 
     # --- Persistence ---
@@ -124,7 +124,7 @@ from returns.result import Result, Success, Failure
 from returns.pipeline import flow
 from returns.pointfree import bind
 
-PROCESS = "create-subscription-order"
+logger = structlog.get_logger(__name__)
 
 
 class CreateSubscriptionOrderUseCase:
@@ -207,7 +207,7 @@ Same newspaper structure. The headline (`execute`) is a `flow()` pipeline of nam
 #### Early Return Style
 
 ```python
-PROCESS = "process-roast-batch"
+logger = structlog.get_logger(__name__)
 
 
 class ProcessRoastBatchUseCase:
@@ -245,7 +245,7 @@ class ProcessRoastBatchUseCase:
     def _resolve_pending_batch(self, batch_id: BatchId) -> Optional[RoastBatch]:
         batch = self._batch_queue.find_pending(batch_id)
         if batch is None:
-            logger.warning(f"{PROCESS} BATCH_SKIPPED batch={batch_id} reason='not found or already processed'")
+            logger.warning("Batch skipped", batch_id=batch_id, reason="not found or already processed")
             return None
         return batch
 
@@ -254,14 +254,14 @@ class ProcessRoastBatchUseCase:
     def _capture_temperature_profile(self, batch: RoastBatch) -> Optional[RoastProfile]:
         profile = self._temperature_monitor.capture_profile(batch.id)
         if profile.peak_temperature not in batch.target_range:
-            logger.warning(f"{PROCESS} BATCH_SKIPPED batch={batch.id} reason='temperature outside target range'")
+            logger.warning("Batch skipped", batch_id=batch.id, reason="temperature outside target range")
             return None
         return profile
 
     def _perform_quality_check(self, batch: RoastBatch, profile: RoastProfile) -> Optional[QualityGrading]:
         grading = self._quality_grader.grade(batch.origin, profile)
         if grading.score < batch.minimum_grade:
-            logger.warning(f"{PROCESS} BATCH_SKIPPED batch={batch.id} reason='quality below threshold'")
+            logger.warning("Batch skipped", batch_id=batch.id, reason="quality below threshold")
             return None
         return grading
 
@@ -285,7 +285,7 @@ from returns.result import Result, Success, Failure
 from returns.pipeline import flow
 from returns.pointfree import bind
 
-PROCESS = "process-roast-batch"
+logger = structlog.get_logger(__name__)
 
 
 class ProcessRoastBatchUseCase:
@@ -354,7 +354,7 @@ class ProcessRoastBatchUseCase:
 #### Early Return Style
 
 ```python
-PROCESS = "ship-order"
+logger = structlog.get_logger(__name__)
 
 
 class ShipOrderUseCase:
@@ -396,14 +396,14 @@ class ShipOrderUseCase:
     def _resolve_ready_order(self, order_id: OrderId) -> Optional[SubscriptionOrder]:
         order = self._order_finder.find_ready_to_ship(order_id)
         if order is None:
-            logger.info(f"{PROCESS} SHIP_SKIPPED order={order_id} reason='not ready to ship'")
+            logger.info("Shipment skipped", order_id=order_id, reason="not ready to ship")
             return None
         return order
 
     def _validate_delivery_address(self, order: SubscriptionOrder) -> Optional[ValidatedAddress]:
         result = self._address_validator.validate(order.delivery_address)
         if not result.is_valid:
-            logger.warning(f"{PROCESS} SHIP_SKIPPED order={order.id} reason='invalid address: {result.reason}'")
+            logger.warning("Shipment skipped", order_id=order.id, reason=f"invalid address: {result.reason}")
             return None
         return result.validated_address
 
@@ -417,7 +417,7 @@ class ShipOrderUseCase:
                 weight=order.total_weight,
             )
         except ShippingProviderError as e:
-            logger.error(f"{PROCESS} LABEL_FAILED order={order.id} error={e}")
+            logger.error("Label generation failed", order_id=order.id, error=str(e))
             return None
 
     # --- Persistence ---
@@ -446,7 +446,7 @@ from returns.result import Result, Success, Failure
 from returns.pipeline import flow
 from returns.pointfree import bind
 
-PROCESS = "ship-order"
+logger = structlog.get_logger(__name__)
 
 
 class ShipOrderUseCase:
@@ -704,10 +704,10 @@ def _process_payment(self, subscription: Subscription, roast: Roast) -> Optional
     try:
         return self._payment_processor.charge(subscription.payment_method, roast.price)
     except PaymentDeclinedError as e:
-        logger.warning(f"{PROCESS} PAYMENT_DECLINED customer={subscription.customer_id} reason={e.reason}")
+        logger.warning("Payment declined", customer_id=subscription.customer_id, reason=e.reason)
         return None
     except PaymentProviderTimeoutError as e:
-        logger.error(f"{PROCESS} PAYMENT_TIMEOUT customer={subscription.customer_id}")
+        logger.error("Payment timeout", customer_id=subscription.customer_id)
         raise  # Let the caller decide on retries
 
 
@@ -912,7 +912,7 @@ Python's version of the newspaper structure. Each layer is more detailed than th
 
 ```python
 # ===== 1. Module-level constants =====
-PROCESS = "fulfill-subscription"
+logger = structlog.get_logger(__name__)
 MAX_RETRY_ATTEMPTS = 3
 ELIGIBLE_STATUSES = frozenset({SubscriptionStatus.ACTIVE, SubscriptionStatus.RESUMING})
 
@@ -962,7 +962,7 @@ class FulfillSubscriptionUseCase:
     def _resolve_eligible_subscription(self, customer_id: CustomerId) -> Optional[Subscription]:
         subscription = self._subscription_finder.find_by_customer(customer_id)
         if subscription is None or subscription.status not in ELIGIBLE_STATUSES:
-            logger.info(f"{PROCESS} SKIPPED customer={customer_id} reason='no eligible subscription'")
+            logger.info("Fulfillment skipped", customer_id=customer_id, reason="no eligible subscription")
             return None
         return subscription
 
@@ -971,7 +971,7 @@ class FulfillSubscriptionUseCase:
         roast = self._inventory_service.find_by_preferences(subscription.preferences)
         if roast is None:
             logger.info(
-                f"{PROCESS} SKIPPED customer={subscription.customer_id} reason='preferred roast unavailable'"
+                "Fulfillment skipped", customer_id=subscription.customer_id, reason="preferred roast unavailable"
             )
             return None
         return roast
@@ -983,7 +983,7 @@ class FulfillSubscriptionUseCase:
                 subscription.next_delivery_date,
             )
         except SchedulingError as e:
-            logger.error(f"{PROCESS} SCHEDULE_FAILED customer={subscription.customer_id} error={e}")
+            logger.error("Schedule failed", customer_id=subscription.customer_id, error=str(e))
             return None
 
     # ===== 6. Private persistence helpers =====
@@ -1371,7 +1371,7 @@ The reader sees one change: `stock=0`. Everything else is the "boring default." 
 | Defaults | `tags: Optional[list] = None` | `tags: list = []` |
 | Collections | `[x for x in items if pred(x)]` | `for` + `append` |
 | Computed values | `@property` for cheap derivations | Method calls for attribute-like access |
-| Constants | Module-level `PROCESS = "..."` | Class-level or buried in methods |
+| Constants | Module-level `MAX_RETRIES = 3` | Class-level or buried in methods |
 | Public methods | 5-10 lines, named steps | Complex logic, logging, object construction |
 | Private methods | Name describes WHAT, not HOW | `_do_stuff()`, `_handle_thing()`, `_process()` |
 | Tests | Fixtures + `replace()` + `given_*` helpers | Full construction in every test |

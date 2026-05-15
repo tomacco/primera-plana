@@ -68,8 +68,9 @@ def execute(self, request: PlaceOrderRequest) -> OrderResult:
 ## Class Layout
 
 ```python
-# 1. Module-level constants
-PROCESS = "place-order"
+# 1. Module-level declarations
+logger = structlog.get_logger(__name__)
+MAX_RETRIES = 3
 
 # 2. Class definition with constructor injection
 class PlaceOrderUseCase:
@@ -257,7 +258,7 @@ def test_should_return_order_when_all_steps_succeed():
 | Error type | `*Error` or `*Failure` enum/class | `OrderError`, `OrderFailure` |
 | Domain object | `PascalCase` frozen dataclass | `Order`, `Subscription` |
 | Factory (tests) | `a_*()` or `an_*()` | `a_place_order_request()` |
-| Constants | `UPPER_SNAKE` at module top | `PROCESS = "place-order"` |
+| Constants | `UPPER_SNAKE` at module top | `MAX_RETRIES = 3` |
 | Private attributes | `self._name` | `self._customer_repository` |
 
 ---

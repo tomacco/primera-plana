@@ -435,6 +435,390 @@
       font-weight: 700;
     }
 
+    /* ============ CODE REVIEW SLIDE ============ */
+
+    .review-ui {
+      background: #0d1117;
+      border: 1px solid #30363d;
+      border-radius: 8px;
+      overflow: hidden;
+      font-family: 'IBM Plex Mono', ui-monospace, monospace;
+      font-size: 0.72rem;
+      text-align: left;
+    }
+
+    .review-header {
+      background: #161b22;
+      border-bottom: 1px solid #30363d;
+      padding: 10px 16px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .review-header .file-icon {
+      width: 16px;
+      height: 16px;
+      background: #8b949e;
+      border-radius: 3px;
+      opacity: 0.6;
+    }
+
+    .review-header .file-path {
+      color: #c9d1d9;
+      font-size: 0.75rem;
+    }
+
+    .review-header .badge {
+      margin-left: auto;
+      font-size: 0.65rem;
+      padding: 2px 8px;
+      border-radius: 10px;
+      font-weight: 600;
+    }
+
+    .review-header .badge-green {
+      background: #1a4d2e;
+      color: #3fb950;
+    }
+
+    .review-header .badge-red {
+      background: #4d1a1a;
+      color: #f85149;
+    }
+
+    .review-diff {
+      padding: 0;
+      line-height: 1.7;
+    }
+
+    .review-diff .diff-hunk {
+      background: #1c2128;
+      color: #8b949e;
+      padding: 4px 16px;
+      border-top: 1px solid #30363d;
+      font-size: 0.65rem;
+    }
+
+    .review-diff .line {
+      display: flex;
+      padding: 0 16px;
+      min-height: 20px;
+    }
+
+    .review-diff .line-num {
+      width: 40px;
+      color: #484f58;
+      text-align: right;
+      padding-right: 12px;
+      user-select: none;
+      flex-shrink: 0;
+    }
+
+    .review-diff .line-content {
+      flex: 1;
+      white-space: pre;
+      overflow-x: auto;
+    }
+
+    .review-diff .line-add {
+      background: #12261e;
+    }
+
+    .review-diff .line-add .line-content {
+      color: #aff5b4;
+    }
+
+    .review-diff .line-del {
+      background: #2d1215;
+    }
+
+    .review-diff .line-del .line-content {
+      color: #ffa198;
+    }
+
+    .review-diff .line-ctx {
+      background: transparent;
+    }
+
+    .review-diff .line-ctx .line-content {
+      color: #8b949e;
+    }
+
+    .review-comment {
+      margin: 8px 16px;
+      border: 1px solid #30363d;
+      border-radius: 6px;
+      background: #161b22;
+      overflow: hidden;
+    }
+
+    .review-comment-header {
+      background: #1c2128;
+      padding: 8px 12px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      border-bottom: 1px solid #30363d;
+    }
+
+    .review-avatar {
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.6rem;
+      font-weight: 700;
+      color: white;
+    }
+
+    .review-avatar-blue { background: #388bfd; }
+    .review-avatar-purple { background: #a371f7; }
+    .review-avatar-teal { background: #4a7c6f; }
+
+    .review-comment-author {
+      color: #c9d1d9;
+      font-weight: 600;
+      font-size: 0.7rem;
+    }
+
+    .review-comment-time {
+      color: #484f58;
+      font-size: 0.6rem;
+      margin-left: auto;
+    }
+
+    .review-comment-body {
+      padding: 10px 12px;
+      color: #c9d1d9;
+      font-size: 0.7rem;
+      font-family: 'Libre Baskerville', -apple-system, sans-serif;
+      line-height: 1.6;
+    }
+
+    .review-comment-body code {
+      background: #2d333b;
+      padding: 1px 5px;
+      border-radius: 3px;
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 0.65rem;
+      color: #e6edf3;
+    }
+
+    .review-comment-body .tag-headline {
+      display: inline-block;
+      background: #1a4d2e;
+      color: #3fb950;
+      padding: 1px 6px;
+      border-radius: 3px;
+      font-size: 0.6rem;
+      font-weight: 600;
+      font-family: 'IBM Plex Mono', monospace;
+    }
+
+    .review-comment-body .tag-leaf {
+      display: inline-block;
+      background: #2a1f4e;
+      color: #a371f7;
+      padding: 1px 6px;
+      border-radius: 3px;
+      font-size: 0.6rem;
+      font-weight: 600;
+      font-family: 'IBM Plex Mono', monospace;
+    }
+
+    .review-panel-wrapper {
+      position: relative;
+    }
+
+    .review-annotation {
+      position: absolute;
+      right: -160px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .review-annotation-bracket {
+      font-family: 'IBM Plex Mono', monospace;
+      font-weight: 200;
+      color: currentColor;
+      line-height: 1;
+    }
+
+    .review-annotation-label {
+      font-family: 'Oswald', sans-serif;
+      font-weight: 700;
+      letter-spacing: 2px;
+      white-space: nowrap;
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .review-annotation-label .ann-title {
+      font-size: 1.3rem;
+    }
+
+    .review-annotation-label .ann-sub {
+      font-family: 'Libre Baskerville', serif;
+      font-size: 0.65rem;
+      font-weight: 400;
+      letter-spacing: 0;
+      opacity: 0.7;
+      font-style: italic;
+    }
+
+    .annotation-headline {
+      top: 48px;
+      height: 140px;
+    }
+
+    .annotation-headline .review-annotation-label {
+      color: #3fb950;
+    }
+
+    .annotation-headline .review-annotation-bracket svg {
+      stroke: #3fb950;
+    }
+
+    .annotation-leaves {
+      top: 215px;
+      height: 370px;
+    }
+
+    .annotation-leaves .review-annotation-label {
+      color: #a371f7;
+    }
+
+    .annotation-leaves .review-annotation-bracket svg {
+      stroke: #a371f7;
+    }
+
+    .review-annotation-bracket svg {
+      width: 16px;
+      height: 100%;
+      fill: none;
+      stroke-width: 1.8;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+
+    /* ============ INSTALL CTA ============ */
+
+    .install-cta {
+      background: #1e1e1e;
+      border: 1px solid #333;
+      border-radius: 8px;
+      padding: 1.5em 2em;
+      margin: 2em auto;
+      max-width: 700px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .install-cta::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 3px;
+      background: linear-gradient(90deg, var(--broadsheet-teal), var(--broadsheet-accent), var(--broadsheet-gold));
+    }
+
+    .install-cta-label {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: #888;
+      margin-bottom: 0.8em;
+    }
+
+    .install-cta-code {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 0.85rem;
+      color: #e8e4db;
+      background: #111;
+      padding: 0.8em 1em;
+      border-radius: 4px;
+      border: 1px solid #2a2a2a;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1em;
+      cursor: pointer;
+      transition: border-color 0.2s, background 0.2s;
+    }
+
+    .install-cta-code:hover {
+      border-color: var(--broadsheet-teal);
+      background: #1a1a1a;
+    }
+
+    .install-cta-code .cmd {
+      overflow-x: auto;
+      white-space: nowrap;
+    }
+
+    .install-cta-code .copy-btn {
+      font-size: 0.75rem;
+      padding: 0.3em 0.7em;
+      background: var(--broadsheet-teal);
+      color: white;
+      border: none;
+      border-radius: 3px;
+      cursor: pointer;
+      white-space: nowrap;
+      transition: opacity 0.2s;
+    }
+
+    .install-cta-code .copy-btn:hover {
+      opacity: 0.85;
+    }
+
+    .install-cta-tools {
+      font-family: 'Libre Baskerville', serif;
+      font-size: 0.8rem;
+      color: #666;
+      margin-top: 0.8em;
+      text-align: center;
+    }
+
+    .install-cta-tools span {
+      display: inline-block;
+      margin: 0 0.4em;
+      padding: 0.2em 0.5em;
+      background: #2a2a2a;
+      border-radius: 3px;
+      color: #aaa;
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 0.7rem;
+    }
+
+    .install-copied {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background: var(--broadsheet-teal);
+      color: white;
+      padding: 0.5em 1.2em;
+      border-radius: 4px;
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 0.85rem;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.3s;
+    }
+
+    .install-copied.show {
+      opacity: 1;
+    }
+
     /* ============ SCROLL INDICATOR ============ */
 
     .scroll-indicator {
@@ -645,8 +1029,7 @@
                 buildSubscription(input, prefs, roastType)
             }
             .onLeft { failure -&gt;
-                logger.warn(PROCESS, FAILED, "userId" to input.userId,
-                    "reason" to "Subscription creation failed: $failure")
+                logger.warn { "Subscription creation failed [userId=${input.userId}, reason=$failure]" }
                 monitor.subscriptionFailed(input.roastType)
             }
     }</code></pre>
@@ -718,6 +1101,160 @@
   </div>
 </section>
 
+<!-- ==================== SLIDE 3.5: CODE REVIEW EXPERIENCE ==================== -->
+<section class="tabloid" id="slide-review" style="padding: 30px 40px; background: #0d1117;">
+  <div class="content" style="max-width: 1100px;">
+    <div class="tabloid-banner reveal" style="font-size: 2rem; color: #c9d1d9; margin-bottom: 0.6em;">THIS IS WHAT A REVIEWER SEES</div>
+
+    <div style="display: grid; grid-template-columns: 1fr 1.3fr; gap: 20px;">
+      <!-- LEFT: Before (bad) -->
+      <div class="reveal">
+        <div class="review-ui">
+          <div class="review-header">
+            <div class="file-icon"></div>
+            <span class="file-path">src/.../PlaceOrderUseCase.kt</span>
+            <span class="badge badge-red">-33</span>
+          </div>
+          <div class="review-diff">
+            <div class="diff-hunk">@@ -12,33 @@ fun execute(request: PlaceOrderRequest): OrderResult</div>
+            <div class="line line-del"><span class="line-num">12</span><span class="line-content">    fun execute(request: PlaceOrderRequest): OrderResult {</span></div>
+            <div class="line line-del"><span class="line-num">13</span><span class="line-content">        val customer = customerRepo.findById(request.customerId)</span></div>
+            <div class="line line-del"><span class="line-num">14</span><span class="line-content">            ?: return OrderResult.NotFound</span></div>
+            <div class="line line-del"><span class="line-num">15</span><span class="line-content">        if (!customer.isActive) {</span></div>
+            <div class="line line-del"><span class="line-num">16</span><span class="line-content">            logger.warn { "Inactive customer ${request.customerId}" }</span></div>
+            <div class="line line-del"><span class="line-num">17</span><span class="line-content">            return OrderResult.InactiveCustomer</span></div>
+            <div class="line line-del"><span class="line-num">18</span><span class="line-content">        }</span></div>
+            <div class="line line-del"><span class="line-num">19</span><span class="line-content">        val items = request.items.map { item -></span></div>
+            <div class="line line-del"><span class="line-num">20</span><span class="line-content">            val product = catalog.findById(item.productId)</span></div>
+            <div class="line line-del"><span class="line-num">21</span><span class="line-content">                ?: return OrderResult.ProductNotFound(item.productId)</span></div>
+            <div class="line line-del"><span class="line-num">22</span><span class="line-content">            if (product.stock &lt; item.quantity) {</span></div>
+            <div class="line line-del"><span class="line-num">23</span><span class="line-content">                return OrderResult.InsufficientStock(product.id)</span></div>
+            <div class="line line-del"><span class="line-num">24</span><span class="line-content">            }</span></div>
+            <div class="line line-del"><span class="line-num">25</span><span class="line-content">            OrderLine(product, item.quantity, product.price * item.quantity)</span></div>
+            <div class="line line-del"><span class="line-num">26</span><span class="line-content">        }</span></div>
+            <div class="line line-del"><span class="line-num">27</span><span class="line-content">        val total = items.sumOf { it.total }</span></div>
+            <div class="line line-del"><span class="line-num">28</span><span class="line-content">        val payment = try {</span></div>
+            <div class="line line-del"><span class="line-num">29</span><span class="line-content">            paymentGateway.charge(customer.paymentMethod, total)</span></div>
+            <div class="line line-del"><span class="line-num">30</span><span class="line-content">        } catch (e: PaymentException) {</span></div>
+            <div class="line line-del"><span class="line-num">31</span><span class="line-content">            logger.error(e) { "Payment failed" }</span></div>
+            <div class="line line-del"><span class="line-num">32</span><span class="line-content">            return OrderResult.PaymentFailed(e.code)</span></div>
+            <div class="line line-del"><span class="line-num">33</span><span class="line-content">        }</span></div>
+            <div class="line line-del"><span class="line-num">34</span><span class="line-content">        val order = Order(</span></div>
+            <div class="line line-del"><span class="line-num">35</span><span class="line-content">            id = OrderId.generate(),</span></div>
+            <div class="line line-del"><span class="line-num">36</span><span class="line-content">            customerId = customer.id,</span></div>
+            <div class="line line-del"><span class="line-num">37</span><span class="line-content">            lines = items, total = total,</span></div>
+            <div class="line line-del"><span class="line-num">38</span><span class="line-content">            paymentId = payment.id,</span></div>
+            <div class="line line-del"><span class="line-num">39</span><span class="line-content">            placedAt = clock.instant(),</span></div>
+            <div class="line line-del"><span class="line-num">40</span><span class="line-content">        )</span></div>
+            <div class="line line-del"><span class="line-num">41</span><span class="line-content">        orderRepo.save(order)</span></div>
+            <div class="line line-del"><span class="line-num">42</span><span class="line-content">        eventBus.publish(OrderPlaced(order))</span></div>
+            <div class="line line-del"><span class="line-num">43</span><span class="line-content">        return OrderResult.Success(order)</span></div>
+            <div class="line line-del"><span class="line-num">44</span><span class="line-content">    }</span></div>
+          </div>
+          <!-- Review comment on the bad code -->
+          <div class="review-comment">
+            <div class="review-comment-header">
+              <div class="review-avatar review-avatar-purple">R</div>
+              <span class="review-comment-author">reviewer</span>
+              <span class="review-comment-time">just now</span>
+            </div>
+            <div class="review-comment-body">
+              I need to read all 32 lines to understand what this method does.
+              Validation, mapping, payment, persistence, event publishing &mdash; all in one block. Where does one concern end and the next begin?
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- RIGHT: After (good) -->
+      <div class="reveal">
+        <div class="review-panel-wrapper">
+        <!-- Bracket annotations -->
+        <div class="review-annotation annotation-headline">
+          <div class="review-annotation-bracket" style="height: 140px;">
+            <svg viewBox="0 0 16 140" style="height: 140px;">
+              <path d="M3,4 C7,4 9,7 9,12 L9,62 C9,67 11,70 15,70 C11,70 9,73 9,78 L9,128 C9,133 7,136 3,136"/>
+            </svg>
+          </div>
+          <span class="review-annotation-label"><span class="ann-title">HEADLINES</span><span class="ann-sub">Read this. Full story.</span></span>
+        </div>
+        <div class="review-annotation annotation-leaves">
+          <div class="review-annotation-bracket" style="height: 370px;">
+            <svg viewBox="0 0 16 370" style="height: 370px;">
+              <path d="M3,4 C7,4 9,7 9,12 L9,177 C9,182 11,185 15,185 C11,185 9,188 9,193 L9,358 C9,363 7,366 3,366"/>
+            </svg>
+          </div>
+          <span class="review-annotation-label"><span class="ann-title">LEAVES</span><span class="ann-sub">Only when debugging.</span></span>
+        </div>
+        <div class="review-ui">
+          <div class="review-header">
+            <div class="file-icon"></div>
+            <span class="file-path">src/.../PlaceOrderUseCase.kt</span>
+            <span class="badge badge-green">+36</span>
+          </div>
+          <div class="review-diff">
+            <div class="diff-hunk">@@ +12,36 @@ fun execute(request: PlaceOrderRequest): OrderResult</div>
+            <div class="line line-add"><span class="line-num">12</span><span class="line-content">  fun execute(request: PlaceOrderRequest): OrderResult {</span></div>
+            <div class="line line-add"><span class="line-num">13</span><span class="line-content">      val customer = resolveCustomer(request) ?: return OrderResult.NotFound</span></div>
+            <div class="line line-add"><span class="line-num">14</span><span class="line-content">      val items = resolveOrderLines(request) ?: return OrderResult.InvalidItems</span></div>
+            <div class="line line-add"><span class="line-num">15</span><span class="line-content">      val payment = processPayment(customer, items) ?: return OrderResult.PaymentFailed</span></div>
+            <div class="line line-add"><span class="line-num">16</span><span class="line-content"> </span></div>
+            <div class="line line-add"><span class="line-num">17</span><span class="line-content">      return placeAndPublish(customer, items, payment)</span></div>
+            <div class="line line-add"><span class="line-num">18</span><span class="line-content">  }</span></div>
+            <div class="line line-ctx"><span class="line-num">19</span><span class="line-content"> </span></div>
+            <div class="line line-ctx"><span class="line-num">20</span><span class="line-content">  // --- Validation ---</span></div>
+            <div class="line line-ctx"><span class="line-num">21</span><span class="line-content"> </span></div>
+            <div class="line line-add"><span class="line-num">22</span><span class="line-content">  private fun resolveCustomer(request: PlaceOrderRequest): Customer? =</span></div>
+            <div class="line line-add"><span class="line-num">23</span><span class="line-content">      customerRepo.findById(request.customerId)</span></div>
+            <div class="line line-add"><span class="line-num">24</span><span class="line-content">          ?.takeIf { it.isActive }</span></div>
+            <div class="line line-ctx"><span class="line-num">25</span><span class="line-content"> </span></div>
+            <div class="line line-ctx"><span class="line-num">26</span><span class="line-content">  // --- Resolution ---</span></div>
+            <div class="line line-ctx"><span class="line-num">27</span><span class="line-content"> </span></div>
+            <div class="line line-add"><span class="line-num">28</span><span class="line-content">  private fun resolveOrderLines(request: PlaceOrderRequest): List&lt;OrderLine&gt;? =</span></div>
+            <div class="line line-add"><span class="line-num">29</span><span class="line-content">      request.items.mapNotNull { resolveLineItem(it) }.takeIf { it.size == request.items.size }</span></div>
+            <div class="line line-ctx"><span class="line-num">30</span><span class="line-content"> </span></div>
+            <div class="line line-add"><span class="line-num">31</span><span class="line-content">  private fun resolveLineItem(item: OrderItem): OrderLine? { ... }</span></div>
+            <div class="line line-ctx"><span class="line-num">32</span><span class="line-content"> </span></div>
+            <div class="line line-ctx"><span class="line-num">33</span><span class="line-content">  // --- Payment ---</span></div>
+            <div class="line line-ctx"><span class="line-num">34</span><span class="line-content"> </span></div>
+            <div class="line line-add"><span class="line-num">35</span><span class="line-content">  private fun processPayment(customer: Customer, items: List&lt;OrderLine&gt;): Payment? =</span></div>
+            <div class="line line-add"><span class="line-num">36</span><span class="line-content">      runCatching { paymentGateway.charge(customer.paymentMethod, items.total()) }</span></div>
+            <div class="line line-add"><span class="line-num">37</span><span class="line-content">          .onFailure { logPaymentFailed(customer, it) }</span></div>
+            <div class="line line-add"><span class="line-num">38</span><span class="line-content">          .getOrNull()</span></div>
+            <div class="line line-ctx"><span class="line-num">39</span><span class="line-content"> </span></div>
+            <div class="line line-ctx"><span class="line-num">40</span><span class="line-content">  // --- Persistence ---</span></div>
+            <div class="line line-ctx"><span class="line-num">41</span><span class="line-content"> </span></div>
+            <div class="line line-add"><span class="line-num">42</span><span class="line-content">  private fun placeAndPublish(customer: Customer, items: List&lt;OrderLine&gt;, payment: Payment): OrderResult {</span></div>
+            <div class="line line-add"><span class="line-num">43</span><span class="line-content">      val order = buildOrder(customer, items, payment)</span></div>
+            <div class="line line-add"><span class="line-num">44</span><span class="line-content">      orderRepo.save(order)</span></div>
+            <div class="line line-add"><span class="line-num">45</span><span class="line-content">      eventBus.publish(OrderPlaced(order))</span></div>
+            <div class="line line-add"><span class="line-num">46</span><span class="line-content">      return OrderResult.Success(order)</span></div>
+            <div class="line line-add"><span class="line-num">47</span><span class="line-content">  }</span></div>
+          </div>
+        </div>
+        </div><!-- /review-panel-wrapper -->
+      </div>
+    </div>
+
+    <p class="reveal" style="font-family: 'Libre Baskerville'; font-size: 1rem; color: #8b949e; margin-top: 1em; text-align: center; font-style: italic;">
+      Same feature. Same test coverage. The right side gets approved in 90 seconds.
+    </p>
+
+    <!-- Install CTA mini -->
+    <div class="reveal" style="margin-top: 1em; text-align: center;">
+      <div style="display: inline-flex; align-items: center; gap: 12px; background: #161b22; border: 1px solid #30363d; border-radius: 6px; padding: 10px 20px;">
+        <span style="font-family: 'IBM Plex Mono', monospace; font-size: 0.75rem; color: #8b949e;">Install:</span>
+        <code style="font-family: 'IBM Plex Mono', monospace; font-size: 0.75rem; color: #e6edf3; background: #0d1117; padding: 4px 10px; border-radius: 4px; border: 1px solid #30363d;">curl -fsSL https://raw.githubusercontent.com/tomacco/primera-plana/main/install/install.sh | bash</code>
+      </div>
+      <div style="margin-top: 0.6em;">
+        <span style="font-family: 'IBM Plex Mono', monospace; font-size: 0.65rem; color: #484f58; letter-spacing: 1px;">
+          KOTLIN &middot; TYPESCRIPT &middot; PYTHON &middot; SWIFT &middot; JAVA
+        </span>
+      </div>
+    </div>
+  </div>
+</section>
+
 <!-- ═══════════════════════════════════════════════════════════════
      ACT 2: THE PHILOSOPHY (transition + broadsheet phase)
      ═══════════════════════════════════════════════════════════════ -->
@@ -775,138 +1312,7 @@
   </div>
 </section>
 
-<!-- ==================== SLIDE 6: READ THE HEADLINES ==================== -->
-<section class="broadsheet halftone" id="slide-headlines">
-  <div class="content" style="text-align: center;">
-    <h2 class="broadsheet-masthead reveal">Read the Headlines</h2>
-    <p class="broadsheet-deck reveal">You understand the full flow without scrolling.</p>
-    <div class="reveal" style="max-width: 900px; width: 90%; margin: 0 auto; position: relative;">
-      <pre style="border-left: 4px solid var(--broadsheet-teal); overflow-x: hidden;"><code class="language-kotlin" style="font-size: clamp(0.8rem, 1.3vw, 1rem); line-height: 1.6; white-space: pre; word-break: keep-all;">validateTemperature(input)
-    .flatMap { fetchGreenBeans(batchId) }
-    .flatMap { beans -&gt; validateBeansReady(beans, input) }
-    .flatMap { beans -&gt; resolveRoastProfile(roasterId, beans) }
-    .flatMap { (beans, profile) -&gt; startRoasting(beans, input, profile) }
-    .onLeft  { logBatchProcessingFailed(roasterId, batchId, it) }</code></pre>
-    </div>
-    <div class="broadsheet-rule" style="max-width: 700px; margin: 2em auto;"></div>
-    <p class="reveal" style="font-family: 'Libre Baskerville'; font-size: 1.2rem; color: var(--broadsheet-ink-light); font-style: italic;">
-      Each line is a headline. The reader decides how deep to go.
-    </p>
-  </div>
-</section>
 
-<!-- ==================== SLIDE 7: THE LEAVES — TABBED ==================== -->
-<section class="broadsheet halftone" id="slide-7" style="padding: 40px 60px;">
-  <div class="content" style="max-width: 1200px;">
-    <h2 class="broadsheet-masthead reveal" style="margin-bottom: 0.2em;">Now Read the Leaves</h2>
-    <p class="broadsheet-deck reveal">Each leaf is self-contained &mdash; one concern, one name. Click to see where it came from.</p>
-    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-top: 1.2em;">
-
-      <!-- LEAF 1: fetchGreenBeans -->
-      <div class="reveal tabbed-code" data-tabgroup="leaf1">
-        <div class="tab-bar">
-          <button class="tab-btn tab-good active" data-tab="after">&check; After</button>
-          <button class="tab-btn tab-bad" data-tab="before">&cross; Before</button>
-        </div>
-        <div class="tab-panel active" data-tab="after" style="position: relative;">
-          <div class="code-verdict pass">&check;</div>
-          <pre style="border-left: 4px solid var(--broadsheet-teal); border-radius: 0 8px 8px 8px;"><code class="language-kotlin" style="font-size: 0.82rem; line-height: 1.6;">private suspend fun fetchGreenBeans(
-    batchId: BatchId,
-): Either&lt;RoastingFailure, List&lt;Bean&gt;&gt; =
-    repository
-        .fetchBatchById(batchId)
-        .mapLeft { UnexpectedFailure("Failed to fetch batch: $batchId") }
-        .flatMap { batch -&gt;
-            val greenBeans = batch.beans.filter { it.stage == BeanStage.GREEN }
-            if (greenBeans.isEmpty()) {
-                DataInvalidityFailure("No green beans in batch").left()
-            } else {
-                greenBeans.right()
-            }
-        }</code></pre>
-        </div>
-        <div class="tab-panel" data-tab="before" style="position: relative;">
-          <div class="code-verdict fail">&cross;</div>
-          <pre style="border-left: 4px solid var(--broadsheet-accent); border-radius: 0 8px 8px 8px;"><code class="language-kotlin" style="font-size: 0.82rem; line-height: 1.6;">// This was INLINE in the main method:
-.flatMap {
-    repository.fetchBatchById(batchId)
-        .mapLeft { UnexpectedFailure("...") }
-}
-.flatMap { batch -&gt;
-    val greenBeans = batch.beans.filter { ... }
-    if (greenBeans.isEmpty()) {
-        return DataInvalidityFailure("...").left()
-    }
-    greenBeans.forEach { bean -&gt;
-        validateBeanMoisture(bean, input)
-            .onLeft { return it.left() }
-    }
-    roasterCapacityValidator
-        .fetchAndValidate(roasterId, greenBeans.first(), "roast")
-        .map { roaster -&gt; greenBeans to roaster }
-}</code></pre>
-        </div>
-        <p class="tab-hint">fetchGreenBeans &mdash; the "fetch + filter + validate" leaf</p>
-      </div>
-
-      <!-- LEAF 2: startRoasting -->
-      <div class="reveal tabbed-code" data-tabgroup="leaf2">
-        <div class="tab-bar">
-          <button class="tab-btn tab-good active" data-tab="after">&check; After</button>
-          <button class="tab-btn tab-bad" data-tab="before">&cross; Before</button>
-        </div>
-        <div class="tab-panel active" data-tab="after" style="position: relative;">
-          <div class="code-verdict pass">&check;</div>
-          <pre style="border-left: 4px solid var(--broadsheet-teal); border-radius: 0 8px 8px 8px;"><code class="language-kotlin" style="font-size: 0.82rem; line-height: 1.6;">private suspend fun startRoasting(
-    beans: List&lt;Bean&gt;,
-    input: ProcessRoastBatchInput,
-    profile: RoastProfile,
-): Either&lt;RoastingFailure, Unit&gt; =
-    beans.fold(Unit.right() as Either&lt;RoastingFailure, Unit&gt;) { acc, bean -&gt;
-        acc.flatMap {
-            repository.update(
-                bean.copy(
-                    stage = BeanStage.ROASTING,
-                    temperature = input.targetTemp,
-                    roastProfile = profile.id,
-                    startedAt = clock.now(),
-                ),
-            )
-            .onRight { batchEventPort.logTransition(bean.beanId, profile.name) }
-            .mapLeft { IntermittentFailure("Could not update bean: ${it.reason}") }
-        }
-    }</code></pre>
-        </div>
-        <div class="tab-panel" data-tab="before" style="position: relative;">
-          <div class="code-verdict fail">&cross;</div>
-          <pre style="border-left: 4px solid var(--broadsheet-accent); border-radius: 0 8px 8px 8px;"><code class="language-kotlin" style="font-size: 0.82rem; line-height: 1.6;">// This was INLINE in the main method:
-.flatMap { (beans, roaster) -&gt;
-    val roastProfile = roaster.profiles
-        .first { it.origin == beans.first().origin }
-    beans.fold(Unit.right()) { acc, bean -&gt;
-        acc.flatMap {
-            repository.update(bean.copy(
-                stage = BeanStage.ROASTING,
-                temperature = input.targetTemp,
-                roastProfile = roastProfile.id,
-                startedAt = clock.now(),
-            ))
-            .onRight { batchEventPort.logTransition(...) }
-            .mapLeft { IntermittentFailure("...") }
-        }
-    }
-}</code></pre>
-        </div>
-        <p class="tab-hint">startRoasting &mdash; the "mutate + log" leaf</p>
-      </div>
-    </div>
-
-    <div class="broadsheet-rule" style="margin-top: 1.5em;"></div>
-    <p class="reveal" style="font-family: 'Libre Baskerville'; font-style: italic; color: var(--broadsheet-ink-light); text-align: center; margin-top: 1em;">
-      Each leaf does one thing. The name tells you what without reading the body.
-    </p>
-  </div>
-</section>
 
 <!-- ═══════════════════════════════════════════════════════════════
      ACT 3: IN YOUR LANGUAGE (broadsheet phase)
@@ -944,6 +1350,14 @@
         <div style="font-family: 'Playfair Display'; font-weight: 900; font-size: 1.6rem; color: var(--tabloid-paper); margin-bottom: 0.3em;">Python</div>
         <div style="font-family: 'IBM Plex Mono'; font-size: 0.65rem; color: var(--tabloid-yellow); margin-bottom: 0.5em;">returns &middot; result</div>
         <div style="font-family: 'Libre Baskerville'; font-size: 0.7rem; color: rgba(232,228,219,0.5);">Backend &middot; ML</div>
+      </div>
+    </div>
+
+    <!-- Install CTA -->
+    <div class="reveal" style="margin-top: 2em;">
+      <div style="display: inline-flex; align-items: center; gap: 12px; background: rgba(255,255,255,0.03); border: 1px solid rgba(232,228,219,0.15); border-radius: 6px; padding: 12px 24px;">
+        <span style="font-family: 'Libre Baskerville', serif; font-size: 0.8rem; color: var(--tabloid-paper); opacity: 0.7;">Install now:</span>
+        <code style="font-family: 'IBM Plex Mono', monospace; font-size: 0.75rem; color: var(--tabloid-yellow); background: rgba(0,0,0,0.3); padding: 5px 12px; border-radius: 4px; cursor: pointer;" onclick="navigator.clipboard.writeText('curl -fsSL https://raw.githubusercontent.com/tomacco/primera-plana/main/install/install.sh | bash -s -- kotlin')">curl -fsSL .../install.sh | bash -s -- <strong>&lt;language&gt;</strong></code>
       </div>
     </div>
   </div>
@@ -1040,8 +1454,8 @@
     String promoCode, String region, String customerId
 ) {
     if (StringUtils.isBlank(promoCode)) {
-        log.info("process=promo_validation, result=invalid_format,"
-            + " customerId={}", customerId);
+        log.info("Promo validation failed: invalid format, customerId={}",
+            customerId);
         throw new ValidationException(INVALID_FORMAT);
     }
     UUID customerUuid = safeUuidFromString(customerId);
@@ -1049,8 +1463,8 @@
     Promotion promo = promotionRepository
         .findByCodeIgnoreCase(promoCode)
         .orElseThrow(() -&gt; {
-            log.info("process=promo_validation, result=not_found,"
-                + " customerId={}", customerId);
+            log.info("Promo not found: code={}, customerId={}",
+                promoCode, customerId);
             return new ValidationException(PROMO_NOT_FOUND);
         });
 
@@ -1058,9 +1472,8 @@
         .flatMap(id -&gt; redemptionRepo
             .findByPromoIdAndCustomerId(promo.getId(), id))
         .ifPresent(r -&gt; {
-            log.info("process=promo_validation, result=redeemed,"
-                + " customerId={}, promoId={}", customerId,
-                promo.getId());
+            log.info("Promo already redeemed: customerId={}, promoId={}",
+                customerId, promo.getId());
             throw new ValidationException(ALREADY_REDEEMED);
         });
 
@@ -1069,8 +1482,8 @@
             .flatMap(id -&gt; ruleUsageRepo
                 .findByCustomerIdAndRuleId(id, rule.getId()))
             .ifPresent(usage -&gt; {
-                log.info("process=promo_validation, result=used,"
-                    + " customerId={}", customerId);
+                log.info("Rule already used: customerId={}, ruleId={}",
+                    customerId, rule.getId());
                 throw new ValidationException(RULE_ALREADY_USED);
             }));
 }</code></pre>
@@ -1535,15 +1948,28 @@ class ProviderManager:
     <div class="broadsheet-rule"></div>
     <div style="max-width: 600px; margin: 2em auto; text-align: left;">
       <ul class="cta-list">
-        <li class="reveal">Keep <code>execute()</code> under 10 lines &mdash; it's your table of contents</li>
+        <li class="reveal">Keep your public method under 10 lines &mdash; it's your table of contents</li>
         <li class="reveal">Name every step &mdash; the name IS the documentation</li>
         <li class="reveal">Push complexity down &mdash; the trunk stays clean, leaves do the work</li>
       </ul>
     </div>
-    <div class="broadsheet-rule" style="max-width: 600px; margin: 2em auto;"></div>
+
+    <!-- Install CTA -->
+    <div class="install-cta reveal" id="install-cta">
+      <div class="install-cta-label">Install for your AI agent &mdash; always on, zero invocation</div>
+      <div class="install-cta-code" onclick="copyInstallCmd(this)" title="Click to copy">
+        <span class="cmd">curl -fsSL https://raw.githubusercontent.com/tomacco/primera-plana/main/install/install.sh | bash</span>
+        <button class="copy-btn">Copy</button>
+      </div>
+      <div class="install-cta-tools">
+        Works with: <span>Claude Code</span><span>Codex</span><span>Copilot</span><span>Cursor</span><span>Windsurf</span><span>Cline</span>
+      </div>
+      <div class="install-copied" id="install-copied">Copied!</div>
+    </div>
+
     <div class="reveal" style="margin-top: 1.5em;">
       <p style="font-family: 'IBM Plex Mono'; font-size: 0.9rem; color: var(--broadsheet-ink-light);">
-        primera-plana/guides/kotlin.md
+        github.com/tomacco/primera-plana
       </p>
       <p style="font-family: 'Libre Baskerville'; font-style: italic; font-size: 1.1rem; color: var(--broadsheet-teal); margin-top: 1em;">
         "The reader's time is more expensive than the writer's."
@@ -1751,6 +2177,20 @@ class ProviderManager:
   });
 
 })();
+
+// ============ INSTALL CTA COPY ============
+function copyInstallCmd(el) {
+  const cmd = el.querySelector('.cmd').textContent;
+  navigator.clipboard.writeText(cmd).then(() => {
+    const badge = document.getElementById('install-copied');
+    badge.classList.add('show');
+    el.querySelector('.copy-btn').textContent = 'Copied!';
+    setTimeout(() => {
+      badge.classList.remove('show');
+      el.querySelector('.copy-btn').textContent = 'Copy';
+    }, 2000);
+  });
+}
 </script>
 
 </body>

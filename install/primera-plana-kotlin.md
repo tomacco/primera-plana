@@ -41,8 +41,9 @@ Code reads like a newspaper. Public methods are headlines (5-10 lines of named s
 ### Class Layout Order
 
 ```kotlin
-// 1. File-level constants
-private const val PROCESS = "my-use-case"
+// 1. File-level declarations
+private val logger = KotlinLogging.logger {}
+private const val MAX_RETRIES = 3
 
 // 2. Class declaration with constructor injection
 class MyUseCase(
@@ -158,7 +159,7 @@ fun `should return order when all steps succeed`() {
 | Private mapping | `to*`, `mapTo*` | `toOrderLine`, `mapToResponse` |
 | Error type | `sealed interface *Error` | `sealed interface OrderError` |
 | Test fixture | `a*()` or `an*()` | `aPlaceOrderRequest()` |
-| Constants | `UPPER_SNAKE` at file top | `private const val PROCESS = "..."` |
+| Constants | `UPPER_SNAKE` at file top | `private const val MAX_RETRIES = 3` |
 
 ---
 

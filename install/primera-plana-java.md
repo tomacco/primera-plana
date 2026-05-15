@@ -72,8 +72,9 @@ public OrderResult placeOrder(PlaceOrderRequest request) {
 ### Class Layout Order
 
 ```java
-// 1. Static constants
-private static final String PROCESS = "place-order";
+// 1. Static declarations
+private static final Logger log = LoggerFactory.getLogger(PlaceOrderUseCase.class);
+private static final int MAX_RETRIES = 3;
 
 // 2. Dependencies (final fields, constructor-injected)
 private final CustomerRepository customerRepository;
@@ -178,7 +179,7 @@ void should_return_order_when_all_steps_succeed() {
 | Private mapping | `to*`, `mapTo*`, `build*` | `toOrderLine`, `buildOrder` |
 | Error type | `sealed interface *Error` or `*Result` | `OrderResult`, `OrderError` |
 | Test fixture | `a*()` or `an*()` builder | `aPlaceOrderRequest()` |
-| Constants | `UPPER_SNAKE` static final | `private static final String PROCESS` |
+| Constants | `UPPER_SNAKE` static final | `private static final int MAX_RETRIES = 3` |
 
 ---
 

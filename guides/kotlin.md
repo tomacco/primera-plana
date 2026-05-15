@@ -23,7 +23,7 @@ Tostado is a specialty coffee subscription service. Customers place recurring or
 #### Nullable Style (no Arrow)
 
 ```kotlin
-private const val PROCESS = "place-subscription-order"
+private val logger = KotlinLogging.logger {}
 
 class PlaceSubscriptionOrderUseCase(
     private val subscriptionFinder: SubscriptionFinder,
@@ -73,17 +73,17 @@ class PlaceSubscriptionOrderUseCase(
     // --- Logging ---
 
     private fun logSkippedAndReturnNull(request: PlaceOrderRequest, reason: String): Nothing? {
-        log.info(PROCESS, "ORDER_SKIPPED", "customerId" to request.customerId, "reason" to reason)
+        logger.info { "Order skipped [customerId=${request.customerId}, reason=$reason]" }
         return null
     }
 
     private fun logSkippedAndReturnNull(subscription: Subscription, reason: String): Nothing? {
-        log.info(PROCESS, "ORDER_SKIPPED", "customerId" to subscription.customerId, "reason" to reason)
+        logger.info { "Order skipped [customerId=${subscription.customerId}, reason=$reason]" }
         return null
     }
 
     private fun logPaymentFailed(subscription: Subscription, error: Throwable) {
-        log.warn(PROCESS, "PAYMENT_FAILED", "customerId" to subscription.customerId, "error" to error.message)
+        logger.warn(error) { "Payment failed [customerId=${subscription.customerId}]" }
     }
 }
 ```
@@ -93,7 +93,7 @@ The headline (`execute`) is five lines. A reviewer reads those five lines and un
 #### Either/Arrow Style
 
 ```kotlin
-private const val PROCESS = "place-subscription-order"
+private val logger = KotlinLogging.logger {}
 
 class PlaceSubscriptionOrderUseCase(
     private val subscriptionFinder: SubscriptionFinder,
@@ -158,7 +158,7 @@ Same newspaper structure. The headline (`execute`) is four lines — a chain of 
 #### Nullable Style
 
 ```kotlin
-private const val PROCESS = "process-roast-batch"
+private val logger = KotlinLogging.logger {}
 
 class ProcessRoastBatchUseCase(
     private val batchQueue: BatchQueue,
@@ -207,7 +207,7 @@ class ProcessRoastBatchUseCase(
     // --- Logging ---
 
     private fun logAndReturnNull(batchId: BatchId, reason: String): Nothing? {
-        log.warn(PROCESS, "BATCH_SKIPPED", "batchId" to batchId, "reason" to reason)
+        logger.warn { "Batch skipped [batchId=$batchId, reason=$reason]" }
         return null
     }
 }
@@ -216,7 +216,7 @@ class ProcessRoastBatchUseCase(
 #### Either/Arrow Style (with Raise context — Arrow 2.x)
 
 ```kotlin
-private const val PROCESS = "process-roast-batch"
+private val logger = KotlinLogging.logger {}
 
 class ProcessRoastBatchUseCase(
     private val batchQueue: BatchQueue,
@@ -284,7 +284,7 @@ Notice how `Raise` context makes the headline even cleaner — no `?: return`, n
 #### Nullable Style
 
 ```kotlin
-private const val PROCESS = "resolve-shipment"
+private val logger = KotlinLogging.logger {}
 
 class ResolveShipmentUseCase(
     private val shipmentTracker: ShipmentTracker,
@@ -338,17 +338,17 @@ class ResolveShipmentUseCase(
     // --- Logging ---
 
     private fun logAndReturnNull(event: TrackingEvent, reason: String): Nothing? {
-        log.info(PROCESS, "SHIPMENT_SKIPPED", "trackingCode" to event.trackingCode, "reason" to reason)
+        logger.info { "Shipment skipped [trackingCode=${event.trackingCode}, reason=$reason]" }
         return null
     }
 
     private fun logAndReturnNull(shipment: Shipment, reason: String): Nothing? {
-        log.warn(PROCESS, "SHIPMENT_UNMATCHED", "shipmentId" to shipment.id, "reason" to reason)
+        logger.warn { "Shipment unmatched [shipmentId=${shipment.id}, reason=$reason]" }
         return null
     }
 
     private fun logSaveFailed(shipment: Shipment, error: Throwable) {
-        log.error(PROCESS, "DELIVERY_SAVE_FAILED", "shipmentId" to shipment.id, "error" to error.message)
+        logger.error(error) { "Delivery save failed [shipmentId=${shipment.id}]" }
     }
 }
 ```
@@ -356,7 +356,7 @@ class ResolveShipmentUseCase(
 #### Either/Arrow Style
 
 ```kotlin
-private const val PROCESS = "resolve-shipment"
+private val logger = KotlinLogging.logger {}
 
 class ResolveShipmentUseCase(
     private val shipmentTracker: ShipmentTracker,
@@ -424,7 +424,7 @@ Companion objects are Java's `static` wearing a Kotlin costume. They add indirec
 
 ```kotlin
 // Primera Plana — file-level for primitives
-private const val PROCESS = "roast-batch-processor"
+private val logger = KotlinLogging.logger {}
 private const val MAX_RETRIES = 3
 
 class RoastBatchProcessor(
@@ -440,8 +440,8 @@ class RoastBatchProcessor(
 // Banned — companion object
 class RoastBatchProcessor(...) {
     companion object {
-        private const val PROCESS = "roast-batch-processor"  // No.
-        private val SUPPORTED_ORIGINS = listOf(...)          // No.
+        private const val MAX_BATCH_SIZE = 50              // No.
+        private val SUPPORTED_ORIGINS = listOf(...)        // No.
     }
 }
 ```
@@ -649,7 +649,7 @@ beans.filter { it.isOrganic }.let { organicBeans ->
 // Primera Plana
 private fun parseRoastEvent(payload: ByteArray) =
     runCatching { RoastEvent.parseFrom(payload) }
-        .onFailure { log.warn(PROCESS, "PARSE_FAILED", "error" to it.message) }
+        .onFailure { logger.warn(it) { "Failed to parse roast event" } }
         .getOrNull()
 
 private fun fetchBeanPrice(origin: Origin) =
@@ -661,7 +661,7 @@ private fun parseRoastEvent(payload: ByteArray): RoastEvent? {
     try {
         return RoastEvent.parseFrom(payload)
     } catch (e: InvalidProtocolBufferException) {
-        log.warn(PROCESS, "PARSE_FAILED", "error" to e.message)
+        logger.warn(e) { "Failed to parse roast event" }
         return null
     }
 }
@@ -675,7 +675,7 @@ The newspaper structure applied to a full class. Each layer is more detailed tha
 
 ```kotlin
 // ===== 1. File-level constants =====
-private const val PROCESS = "fulfill-subscription"
+private val logger = KotlinLogging.logger {}
 private const val MAX_RETRY_ATTEMPTS = 3
 
 // ===== 2. Class parameters (DI) =====
@@ -736,12 +736,12 @@ class FulfillSubscriptionUseCase(
 
     // ===== 9. Logging/error helpers =====
     private fun logSkippedAndReturnNull(customerId: CustomerId, reason: String): Nothing? {
-        log.info(PROCESS, "FULFILLMENT_SKIPPED", "customerId" to customerId, "reason" to reason)
+        logger.info { "Fulfillment skipped [customerId=$customerId, reason=$reason]" }
         return null
     }
 
     private fun logScheduleFailed(subscription: Subscription, error: Throwable) {
-        log.error(PROCESS, "SCHEDULE_FAILED", "customerId" to subscription.customerId, "error" to error.message)
+        logger.error(error) { "Schedule failed [customerId=${subscription.customerId}]" }
     }
 
     // ===== 10. Utility helpers =====
@@ -998,7 +998,7 @@ Either way, the newspaper reads the same. Public methods are headlines. Private 
 
 | Rule | Do | Don't |
 |------|----|-------|
-| Constants | `private const val PROCESS = "..."` at file level | `companion object { }` |
+| Constants | `private const val MAX_RETRIES = 3` at file level | `companion object { }` |
 | Null safety | `?: error("context")` / `requireNotNull { }` | `!!` |
 | Iteration | `.map`, `.filter`, `.firstOrNull`, `generateSequence` | `for`, `while`, `do` |
 | Single expressions | `fun x() = expr` | `fun x() { return expr }` |
