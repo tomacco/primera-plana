@@ -7,6 +7,9 @@
 </p>
 
 <p align="center">
+  <a href="https://tomacco.github.io/primera-plana/presentation/">
+    <img src="https://img.shields.io/badge/Live_Demo-Presentation-e8e4db?style=for-the-badge&logo=googlechrome&logoColor=2a2520" alt="Live Demo"/>
+  </a>
   <a href="#install">
     <img src="https://img.shields.io/badge/Install-One_Liner-4a7c6f?style=for-the-badge&logo=terminal&logoColor=white" alt="Install"/>
   </a>
