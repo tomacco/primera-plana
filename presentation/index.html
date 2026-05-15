@@ -1685,102 +1685,103 @@ struct RoastView: View {
 <section class="broadsheet halftone" id="slide-lang-ts" style="padding: 40px 60px;">
   <div class="content" style="max-width: 1100px;">
     <h2 class="broadsheet-masthead reveal" style="font-size: 2.2rem;">TypeScript</h2>
-    <p class="broadsheet-deck reveal">API layers, React hooks, services &mdash; same philosophy everywhere.</p>
-    <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px;">
+    <p class="broadsheet-deck reveal">The API route that does everything &mdash; validation, billing, cache, Slack &mdash; in one function.</p>
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
       <div class="reveal" style="position: relative;">
         <div class="code-verdict fail">&cross;</div>
-        <div class="code-caption bad">BEFORE &mdash; NESTED TRY/CATCH</div>
-        <pre style="border-left: 4px solid var(--broadsheet-accent);"><code class="language-typescript" style="font-size: 0.68rem; line-height: 1.6;">async function loadDashboard() {
-  setLoading(true);
+        <div class="code-caption bad">BEFORE &mdash; GOD HANDLER (38 lines, 7 concerns)</div>
+        <pre style="border-left: 4px solid var(--broadsheet-accent);"><code class="language-typescript" style="font-size: 0.62rem; line-height: 1.55;">// POST /api/subscriptions/renew
+export async function POST(req: Request) {
+  const body = await req.json();
+  if (!body.subscriptionId || !body.paymentMethodId) {
+    return Response.json({ error: "Missing fields" }, { status: 400 });
+  }
   try {
-    const stats = await fetch(`${BASE}/stats`);
-    if (!stats.ok) {
-      setError("Failed to load stats");
-      setLoading(false);
-      return;
-    }
-    const batches = await fetch(`${BASE}/batches`);
-    if (!batches.ok) {
-      setError("Failed to load batches");
-      setLoading(false);
-      return;
-    }
-    const statsData = await stats.json();
-    const batchData = await batches.json();
-    setStats(statsData);
-    setBatches(batchData.batches);
-    const subs = await Promise.all(
-      batchData.batches
-        .filter((b: any) =&gt; b.status === "active")
-        .map((b: any) =&gt;
-          fetch(`${BASE}/batches/${b.id}/subs`)
-            .then(r =&gt; r.json())
-        )
+    const sub = await db.query(
+      `SELECT * FROM subscriptions WHERE id = '${body.subscriptionId}'`
     );
-    setSubscriptions(subs.flat());
-    setError(null);
+    if (!sub) return Response.json({ error: "Not found" }, { status: 404 });
+    if (sub.status === "cancelled" || sub.status === "paused") {
+      return Response.json({ error: "Inactive" }, { status: 422 });
+    }
+    const customer = await fetch(
+      `${BILLING_API}/customers/${sub.customer_id}`,
+      { headers: { Authorization: `Bearer ${BILLING_KEY}` } },
+    ).then(r =&gt; r.json()) as any;
+    const nextRoast = new Date(sub.last_roast_date);
+    nextRoast.setDate(nextRoast.getDate() + sub.frequency_weeks * 7);
+    const charge = await fetch(`${BILLING_API}/charges`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json",
+        Authorization: `Bearer ${BILLING_KEY}` },
+      body: JSON.stringify({
+        amount: sub.price_cents, currency: "eur",
+        customer: customer.id,
+        payment_method: body.paymentMethodId,
+        description: `Tostado ${sub.plan_name} - ${sub.bag_size_g}g`,
+      }),
+    }).then(r =&gt; r.json()) as any;
+    if (charge.status !== "succeeded") {
+      await db.query(`UPDATE subscriptions SET status = 'payment_failed',
+        retry_count = retry_count + 1 WHERE id = '${body.subscriptionId}'`);
+      await fetch(SLACK_WEBHOOK!, { method: "POST",
+        body: JSON.stringify({ text: `Payment failed: ${body.subscriptionId}` })
+      });
+      return Response.json({ error: charge.failure_reason }, { status: 402 });
+    }
+    await db.query(`UPDATE subscriptions SET last_roast_date =
+      '${nextRoast.toISOString()}', status = 'active' WHERE id = '${body.subscriptionId}'`);
+    await redis.del(`customer:${sub.customer_id}:sub`);
+    return Response.json({ success: true, nextRoast: nextRoast.toISOString() });
   } catch (err: any) {
-    setError(err.message || "Unknown error");
-  } finally {
-    setLoading(false);
+    return Response.json({ error: "Internal error" }, { status: 500 });
   }
 }</code></pre>
       </div>
       <div class="reveal" style="position: relative;">
         <div class="code-verdict pass">&check;</div>
-        <div class="code-caption good">AFTER &mdash; TYPED API LAYER</div>
-        <pre style="border-left: 4px solid var(--broadsheet-teal);"><code class="language-typescript" style="font-size: 0.68rem; line-height: 1.6;">async function request&lt;T&gt;(path: string, options?: RequestInit): Promise&lt;T&gt; {
-  const res = await fetch(`${BASE}${path}`, {
-    headers: { "Content-Type": "application/json" },
-    ...options,
-  });
-  if (!res.ok) {
-    const body = await res.json().catch(() =&gt; ({}));
-    throw new Error(body?.error?.message || `HTTP ${res.status}`);
-  }
-  return res.json();
+        <div class="code-caption good">AFTER &mdash; HEADLINE + LEAVES</div>
+        <pre style="border-left: 4px solid var(--broadsheet-teal);"><code class="language-typescript" style="font-size: 0.62rem; line-height: 1.55;">// POST /api/subscriptions/renew
+export async function POST(req: Request) {
+  const input = parseRenewalRequest(await req.json());
+  if (!input) return badRequest("Missing subscriptionId or paymentMethodId");
+
+  const subscription = await findActiveSubscription(input.subscriptionId);
+  if (!subscription) return notFound("Subscription not found or inactive");
+
+  const charge = await chargeCustomer(subscription, input.paymentMethodId);
+  if (!charge.succeeded) return handleFailedPayment(subscription, charge);
+
+  const nextRoastDate = computeNextRoastDate(subscription);
+  await recordRenewal(subscription, nextRoastDate);
+  await invalidateCache(subscription.customerId);
+
+  return Response.json({ success: true, nextRoast: nextRoastDate.toISOString() });
 }
 
-export const api = {
-  stats: () =&gt; request&lt;Stats&gt;("/stats"),
-  batches: {
-    list: () =&gt; request&lt;{ batches: RoastBatch[] }&gt;("/batches"),
-    get: (id: string) =&gt; request&lt;RoastBatch&gt;(`/batches/${id}`),
-    subs: (id: string) =&gt; request&lt;Subscription[]&gt;(`/batches/${id}/subs`),
-  },
-};</code></pre>
-      </div>
-      <div class="reveal" style="position: relative;">
-        <div class="code-verdict pass">&check;</div>
-        <div class="code-caption good">AFTER &mdash; REACT HOOK</div>
-        <pre style="border-left: 4px solid var(--broadsheet-teal);"><code class="language-typescript" style="font-size: 0.68rem; line-height: 1.6;">function useDashboard() {
-  const [stats, setStats] = useState&lt;Stats | null&gt;(null);
-  const [error, setError] = useState&lt;string | null&gt;(null);
+// --- Validation ---
 
-  const load = useCallback(async () =&gt; {
-    try {
-      const [statsRes, batchRes] = await Promise.all([
-        api.stats(),
-        api.batches.list(),
-      ]);
-      setStats(statsRes);
-      setBatches(batchRes.batches);
+function parseRenewalRequest(body: unknown): RenewalInput | null { ... }
 
-      const activeSubs = await loadActiveSubscriptions(batchRes.batches);
-      setSubscriptions(activeSubs);
-      setError(null);
-    } catch (err) {
-      setError(err instanceof Error ? err.message : "Failed");
-    }
-  }, []);
+async function findActiveSubscription(id: string): Promise&lt;Subscription | null&gt; { ... }
 
-  useEffect(() =&gt; { load(); }, [load]);
-  return { stats, error, reload: load };
-}</code></pre>
+// --- Billing ---
+
+async function chargeCustomer(sub: Subscription, paymentMethod: string) { ... }
+
+async function handleFailedPayment(sub: Subscription, charge: ChargeResult) { ... }
+
+// --- Persistence ---
+
+function computeNextRoastDate(sub: Subscription): Date { ... }
+
+async function recordRenewal(sub: Subscription, nextDate: Date) { ... }
+
+async function invalidateCache(customerId: string) { ... }</code></pre>
       </div>
     </div>
     <p class="reveal" style="font-family: 'IBM Plex Mono'; font-size: 0.75rem; color: var(--broadsheet-ink-light); margin-top: 1.2em; text-align: center;">
-      Libraries: <strong>neverthrow</strong> (Result + andThen) &middot; <strong>Effect</strong> (typed effects) &middot; or just <strong>early returns + typed API wrappers</strong>
+      SQL injection, <code>as any</code>, inline date math, Slack in the handler &mdash; all gone. Headline: 13 lines.
     </p>
   </div>
 </section>
@@ -1789,115 +1790,120 @@ export const api = {
 <section class="broadsheet halftone" id="slide-lang-python" style="padding: 40px 60px;">
   <div class="content" style="max-width: 1100px;">
     <h2 class="broadsheet-masthead reveal" style="font-size: 2.2rem;">Python</h2>
-    <p class="broadsheet-deck reveal">Frozen dataclasses, guard clauses, typed returns &mdash; Pythonic and structured.</p>
-    <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px;">
+    <p class="broadsheet-deck reveal">The Celery task that validates, queries, reserves inventory, charges, and emails &mdash; all in one function.</p>
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
       <div class="reveal" style="position: relative;">
         <div class="code-verdict fail">&cross;</div>
-        <div class="code-caption bad">BEFORE &mdash; NESTED TRY/EXCEPT</div>
-        <pre style="border-left: 4px solid var(--broadsheet-accent);"><code class="language-python" style="font-size: 0.68rem; line-height: 1.6;">def start_batch(self, batch_id: str):
+        <div class="code-caption bad">BEFORE &mdash; GOD TASK (45 lines, 6 concerns)</div>
+        <pre style="border-left: 4px solid var(--broadsheet-accent);"><code class="language-python" style="font-size: 0.62rem; line-height: 1.55;">@shared_task(bind=True, max_retries=3)
+def process_roast_batch(self, batch_id, triggered_by="scheduler"):
     try:
-        batch = self._repo.get(batch_id)
-        if batch is not None:
-            profile = None
-            for p in self._profiles.all():
-                if p.origin == batch.origin:
-                    profile = p
-                    break
-            if profile is not None:
-                if self._check_capacity(batch, profile):
-                    try:
-                        result = self._roast_api.start(
-                            batch, profile
-                        )
-                        self._repo.update_status(
-                            batch_id, "roasting"
-                        )
-                        logger.info("Started %s", batch_id)
-                        return result
-                    except ApiError as e:
-                        logger.error("API failed: %s", e)
-                        return None
-                else:
-                    logger.warning("No capacity")
-                    return None
+        batch = RoastBatch.objects.select_related("roast_profile", "origin").get(id=batch_id)
+        if batch.status not in ("scheduled", "retry"):
+            logger.warning(f"Batch {batch_id} unexpected state: {batch.status}")
+            return {"skipped": True, "reason": f"status={batch.status}"}
+        orders = Order.objects.filter(
+            subscription__roast_profile=batch.roast_profile,
+            subscription__status="active",
+            shipment_batch__isnull=True,
+        ).select_related("subscription", "subscription__customer")
+        if not orders.exists():
+            batch.status = "cancelled"
+            batch.cancelled_reason = "no_eligible_orders"
+            batch.save()
+            return {"cancelled": True}
+        total_grams = 0
+        for order in orders:
+            if order.subscription.bag_size_g:
+                total_grams += order.subscription.bag_size_g * order.quantity
             else:
-                logger.warning("No profile for %s", batch.origin)
-                return None
-        else:
-            logger.warning("Batch not found: %s", batch_id)
-            return None
-    except DatabaseError as e:
-        logger.error("DB error: %s", e)
-        return None</code></pre>
+                total_grams += 250 * order.quantity
+        inventory = Inventory.objects.get(origin=batch.origin)
+        if inventory.available_grams &lt; total_grams:
+            batch.status = "blocked"
+            batch.blocked_reason = f"Need {total_grams}g, have {inventory.available_grams}g"
+            batch.save()
+            requests.post(settings.SLACK_WEBHOOK, json={
+                "text": f":warning: Batch {batch_id} blocked: {batch.origin.name} "
+                        f"({inventory.available_grams}g &lt; {total_grams}g)"
+            })
+            return {"blocked": True, "deficit": total_grams - inventory.available_grams}
+        with transaction.atomic():
+            inventory.available_grams -= total_grams
+            inventory.reserved_grams += total_grams
+            inventory.save()
+            batch.status = "roasting"
+            batch.total_grams = total_grams
+            batch.order_count = orders.count()
+            batch.started_at = timezone.now()
+            batch.save()
+            orders.update(shipment_batch=batch)
+        for order in orders:
+            send_mail(
+                subject=f"Your {batch.roast_profile.name} is being roasted!",
+                message=f"Hi {order.subscription.customer.first_name}, your "
+                        f"{order.subscription.bag_size_g}g bag is now roasting.",
+                from_email=settings.DEFAULT_FROM_EMAIL,
+                recipient_list=[order.subscription.customer.email],
+            )
+        return {"started": True, "orders": orders.count(), "grams": total_grams}
+    except Inventory.DoesNotExist:
+        raise self.retry(countdown=60)
+    except Exception as e:
+        batch.status = "error"
+        batch.error_message = str(e)[:500]
+        batch.save()
+        raise</code></pre>
       </div>
       <div class="reveal" style="position: relative;">
         <div class="code-verdict pass">&check;</div>
-        <div class="code-caption good">AFTER &mdash; GUARD CLAUSES</div>
-        <pre style="border-left: 4px solid var(--broadsheet-teal);"><code class="language-python" style="font-size: 0.68rem; line-height: 1.6;">@dataclass(frozen=True)
-class RoastResult:
-    batch_id: str
-    profile: RoastProfile
-    started_at: float
-    beans_processed: int
+        <div class="code-caption good">AFTER &mdash; HEADLINE + LEAVES</div>
+        <pre style="border-left: 4px solid var(--broadsheet-teal);"><code class="language-python" style="font-size: 0.62rem; line-height: 1.55;">@shared_task(bind=True, max_retries=3)
+def process_roast_batch(self, batch_id: str, triggered_by: str = "scheduler"):
+    batch = _fetch_batch_if_ready(batch_id)
+    if not batch:
+        return {"skipped": True, "reason": "not_in_processable_state"}
 
-class RoastService:
-    def start_batch(self, batch_id: str) -&gt; RoastResult | None:
-        batch = self._fetch_batch(batch_id)
-        if batch is None:
-            return None
+    orders = _find_eligible_orders(batch)
+    if not orders:
+        return _cancel_batch_no_orders(batch)
 
-        profile = self._resolve_profile(batch)
-        if profile is None:
-            return None
+    required_grams = _compute_total_grams(orders)
 
-        if not self._validate_capacity(batch, profile):
-            return None
+    if not _has_sufficient_inventory(batch.origin, required_grams):
+        return _block_batch_insufficient_stock(batch, required_grams)
 
-        return self._begin_roasting(batch, profile)
+    _reserve_inventory_and_start(batch, orders, required_grams)
+    _notify_customers(batch, orders)
 
-    def _fetch_batch(self, batch_id: str) -&gt; RoastBatch | None:
-        try:
-            return self._repo.get(batch_id)
-        except DatabaseError:
-            logger.warning("Batch not found: %s", batch_id)
-            return None</code></pre>
-      </div>
-      <div class="reveal" style="position: relative;">
-        <div class="code-verdict pass">&check;</div>
-        <div class="code-caption good">AFTER &mdash; ASYNC + ABC</div>
-        <pre style="border-left: 4px solid var(--broadsheet-teal);"><code class="language-python" style="font-size: 0.68rem; line-height: 1.6;">class RoastProvider(ABC):
-    @abstractmethod
-    async def initialize(self, config: dict) -&gt; None: ...
-
-    @abstractmethod
-    async def process_batch(
-        self, batch: RoastBatch
-    ) -&gt; RoastBatch: ...
+    return {"started": True, "orders": len(orders), "grams": required_grams}
 
 
-class ProviderManager:
-    async def activate(self, provider_id: str) -&gt; RoastProvider:
-        if not self._has_capacity(provider_id):
-            await self._evict_least_recent()
+# --- Validation ---
 
-        provider = self._registry.get(provider_id)
-        if provider is None:
-            raise ProviderNotFoundError(provider_id)
+def _fetch_batch_if_ready(batch_id: str) -&gt; RoastBatch | None: ...
 
-        try:
-            await provider.initialize(self._config)
-        except Exception as e:
-            self._bus.emit(Event(type="failed", detail=str(e)))
-            raise
-        finally:
-            self._loading = None
+def _find_eligible_orders(batch: RoastBatch) -&gt; QuerySet: ...
 
-        self._active = provider
-        return provider</code></pre>
+# --- Business rules ---
+
+def _compute_total_grams(orders: QuerySet) -&gt; int: ...
+
+def _has_sufficient_inventory(origin: Origin, grams: int) -&gt; bool: ...
+
+# --- Side effects ---
+
+def _cancel_batch_no_orders(batch: RoastBatch) -&gt; dict: ...
+
+def _block_batch_insufficient_stock(batch: RoastBatch, grams: int) -&gt; dict: ...
+
+def _reserve_inventory_and_start(batch, orders, grams) -&gt; None: ...
+
+def _notify_customers(batch: RoastBatch, orders: QuerySet) -&gt; None: ...</code></pre>
       </div>
     </div>
     <p class="reveal" style="font-family: 'IBM Plex Mono'; font-size: 0.75rem; color: var(--broadsheet-ink-light); margin-top: 1.2em; text-align: center;">
-      Libraries: <strong>dry-python/returns</strong> (Result, flow, bind) &middot; <strong>rustedpy/result</strong> (Ok/Err) &middot; or just <strong>Optional + guard clauses</strong>
+      45-line god task &rarr; 15-line headline. Each <code>_helper</code> is one testable concern.
     </p>
   </div>
 </section>
