@@ -18,6 +18,7 @@ curl -fsSL https://raw.githubusercontent.com/tomacco/primera-plana/main/install/
 curl -fsSL https://raw.githubusercontent.com/tomacco/primera-plana/main/install/install.sh | bash -s -- python
 curl -fsSL https://raw.githubusercontent.com/tomacco/primera-plana/main/install/install.sh | bash -s -- swift
 curl -fsSL https://raw.githubusercontent.com/tomacco/primera-plana/main/install/install.sh | bash -s -- java
+curl -fsSL https://raw.githubusercontent.com/tomacco/primera-plana/main/install/install.sh | bash -s -- csharp
 ```
 
 ---
@@ -46,6 +47,7 @@ Primera Plana installs as **coding standards** — a file your AI agent reads at
 |------|----------|-----------|
 | `primera-plana-kotlin.md` | Kotlin (+ Arrow/Either) | Backend, Android |
 | `primera-plana-java.md` | Java (+ Vavr) | Enterprise, Spring |
+| `primera-plana-csharp.md` | C# (+ ErrorOr) | .NET, ASP.NET Core |
 | `primera-plana-swift.md` | Swift (+ Result) | iOS, macOS |
 | `primera-plana-typescript.md` | TypeScript (+ neverthrow) | Full-stack, React |
 | `primera-plana-python.md` | Python (+ dry-python/returns) | Backend, ML |

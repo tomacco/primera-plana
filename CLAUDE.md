@@ -9,6 +9,11 @@ All code examples use the "Tostado" domain — a coffee roastery e-commerce plat
 - Partners: coffee farmers, logistics providers
 - Inventory management, quality control
 
+C# examples use the "Zumo" domain — a tech-run cold-pressed juice company:
+- Fruit lots graded on Brix and acidity, press runs on IoT presses, HPP cycles
+- Smart fridges in offices and gyms (stock + heartbeat telemetry), restocks, courier routes
+- Weekly juice plans (subscriptions)
+
 Never use N26, investments, banking, or any company-specific domain in examples.
 
 ## Writing style
@@ -23,5 +28,5 @@ Never use N26, investments, banking, or any company-specific domain in examples.
 
 - Philosophy is language-agnostic
 - Kotlin is the primary reference implementation
-- Swift and TypeScript are secondary guides
-- All three should feel native to their ecosystem, not like ports
+- C#, Swift, TypeScript and Python are first-class guides
+- All of them should feel native to their ecosystem, not like ports

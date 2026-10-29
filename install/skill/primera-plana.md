@@ -66,6 +66,7 @@ Use the language's native patterns:
 - **TypeScript**: Discriminated unions, pipe operators, branded types
 - **Python**: dataclasses, match statements, Result monads
 - **Java**: sealed interfaces, records, Vavr Either
+- **C#**: `is not { } x` guard clauses, switch expressions, records, `TypedResults`, ErrorOr, `TimeProvider`, `[LoggerMessage]`
 
 ### Step 5: Verify the newspaper test
 
@@ -98,6 +99,8 @@ Provide specific suggestions with before/after snippets.
 | Logging mixed with business logic | Extract logging to leaf method |
 | Error mapping inline | Extract to `private fun mapToError()` |
 | Constructor with complex initialization | Extract to factory or builder leaf |
+| Fat controller action / endpoint (C#) | Move the story into a handler; the action becomes one line |
+| `try/catch` around infrastructure calls in the headline | Catch once in middleware (`IExceptionHandler` in C#) |
 
 ---
 

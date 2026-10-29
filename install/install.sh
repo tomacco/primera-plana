@@ -1,11 +1,12 @@
 #!/bin/bash
 # Primera Plana — One-command installer for AI coding harnesses
 # Usage: curl -fsSL https://raw.githubusercontent.com/tomacco/primera-plana/main/install/install.sh | bash -s -- [language]
-# Languages: kotlin (default), java, swift, typescript, python
+# Languages: kotlin (default), java, csharp, swift, typescript, python
 
 set -euo pipefail
 
 LANG="${1:-kotlin}"
+case "$LANG" in cs|c#|dotnet) LANG=csharp ;; esac
 REPO="https://raw.githubusercontent.com/tomacco/primera-plana/main"
 STANDARDS_URL="${REPO}/install/primera-plana-${LANG}.md"
 SKILL_URL="${REPO}/install/skill/primera-plana.md"

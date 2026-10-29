@@ -374,4 +374,4 @@ The world changed. AI made writing nearly free. Reading is still expensive. Prim
 
 ---
 
-*Next: Read the language-specific guides for idiomatic implementations in [Kotlin](guides/kotlin.md), [Swift](guides/swift.md), and [TypeScript](guides/typescript.md).*
+*Next: Read the language-specific guides for idiomatic implementations in [Kotlin](guides/kotlin.md), [C#](guides/csharp.md), [Swift](guides/swift.md), [TypeScript](guides/typescript.md), and [Python](guides/python.md).*

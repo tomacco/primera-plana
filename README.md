@@ -17,7 +17,7 @@
     <img src="https://img.shields.io/badge/Read-Philosophy-8c5e4a?style=for-the-badge&logo=bookstack&logoColor=white" alt="Philosophy"/>
   </a>
   <a href="guides/">
-    <img src="https://img.shields.io/badge/Guides-5_Languages-8b7535?style=for-the-badge&logo=code&logoColor=white" alt="Guides"/>
+    <img src="https://img.shields.io/badge/Guides-6_Languages-8b7535?style=for-the-badge&logo=code&logoColor=white" alt="Guides"/>
   </a>
 </p>
 
@@ -75,6 +75,7 @@ curl -fsSL https://raw.githubusercontent.com/tomacco/primera-plana/main/install/
 curl -fsSL https://raw.githubusercontent.com/tomacco/primera-plana/main/install/install.sh | bash -s -- python
 curl -fsSL https://raw.githubusercontent.com/tomacco/primera-plana/main/install/install.sh | bash -s -- swift
 curl -fsSL https://raw.githubusercontent.com/tomacco/primera-plana/main/install/install.sh | bash -s -- java
+curl -fsSL https://raw.githubusercontent.com/tomacco/primera-plana/main/install/install.sh | bash -s -- csharp
 ```
 
 </details>
@@ -104,6 +105,7 @@ Language-specific guides with full examples, idioms, and patterns:
 | Language | Guide | Ecosystem |
 |----------|-------|-----------|
 | Kotlin | [`guides/kotlin.md`](guides/kotlin.md) | Backend, Android, Arrow/Either |
+| C# | [`guides/csharp.md`](guides/csharp.md) | .NET, ASP.NET Core, ErrorOr |
 | Python | [`guides/python.md`](guides/python.md) | Backend, ML, structlog/returns |
 | TypeScript | [`guides/typescript.md`](guides/typescript.md) | Full-stack, React, neverthrow |
 | Swift | [`guides/swift.md`](guides/swift.md) | iOS, macOS, Result types |
